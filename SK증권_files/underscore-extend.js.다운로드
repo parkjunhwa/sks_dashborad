@@ -1,0 +1,9 @@
+/* 솔루피아 underscorejs 확장 정의 함수
+ * @author jason, Moon.
+ */
+
+(function() {
+  _.isNotEmpty = function(obj) {
+    return !_.isEmpty(obj);
+  };
+}());

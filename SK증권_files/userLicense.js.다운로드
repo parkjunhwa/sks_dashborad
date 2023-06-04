@@ -1,0 +1,51 @@
+const UserLicenseWidget = {
+    $el: $.scope("USER_LICENSE_WIDGET"),
+
+    config: {
+        widgetId: "USER_LICENSE",
+        color: "",
+        textColor: "",
+        borderStyle: "",
+        borderWeight: "",
+        borderColor: "",
+        icon: "",
+        iconSize: ""
+    },
+
+    init: function () {
+        const _this = this;
+
+        WidgetCommon.methods.changeConfig(_this, _this.$el.getFieldParameters());
+    }
+};
+UserLicenseWidget.init();
+
+const UserLicenseWidgetConfig = {
+    $el: $.scope("USER_LICENSE_WIDGET_CONF"),
+
+    main: UserLicenseWidget,
+
+    init: function () {
+        const _this = this;
+
+        WidgetCommonConfig.bind.fields(_this);
+        WidgetCommonConfig.bind.buttons(_this);
+
+        /**
+         * WidgetConfig 창이 열릴때, 모든 데이터를 초기화 한다.
+         */
+        _this.$el.on("show.bs.modal", function () {
+            WidgetCommonConfig.reload(_this);
+        });
+
+        _this.$el.on("hidden.bs.modal", function () {
+        });
+    },
+
+    close: function () {
+        const _this = this;
+
+        _this.$el.modal("hide");
+    }
+};
+UserLicenseWidgetConfig.init();

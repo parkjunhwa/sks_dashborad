@@ -1,0 +1,130 @@
+const CompletedDraftPieChartWidget = {
+    $el: $.scope("COMPLETED_DRAFT_PIE_CHART_WIDGET"),
+    config: {
+        widgetId: "COMPLETED_DRAFT_PIE_CHART"
+    },
+    
+    instance: null,
+
+    chartConfig: {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie',
+            height : 300,
+            // height : (9 / 17 * 75) + '%',
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: _i18n.t('처리 현황'),
+            colorByPoint: true,
+            data: null
+        }]
+    },
+
+    init: function () {
+        CompletedDraftPieChartWidget.reload("2");
+        CompletedDraftPieChartWidget.bind.fields();
+    },
+
+    reload: function (type) {
+        const _this = this;
+        _AJAX.get({
+            url: `/api/approval/dashboard/completed-draft-pie-chart/${type}`,
+            success: function (response) {
+                if (null == response || null == response["data"]){
+                    return;
+                }
+                _this.chartConfig.series[0].data = response["data"];
+
+                Highcharts.chart(_this.config.widgetId, _this.chartConfig);
+            }
+        });
+        _this.bind.fields(_this);
+        WidgetCommon.methods.changeConfig(_this, _this.$el.getFieldParameters());
+    },
+    bind: {
+        fields: function () {
+            let _this = CompletedDraftPieChartWidget;
+            _this.$el.find("[data-period-type]").click(function () {
+                const _$that = $(this);
+
+                _this.methods.closeDropdown(_this);
+
+                _$that.parent().parent().scope("label").text(_$that.text());
+
+                _this.reload(_$that.data("period-type"));
+            });
+        }
+    },
+
+    methods: {
+        randomize: () => {
+            if (null != CompletedDraftPieChartWidget.instance) {
+                CompletedDraftPieChartWidget.instance.config.data.datasets.forEach(function (dataset) {
+                    dataset.data = dataset.data.map(function () {
+                        return Math.round(Math.random() * (100));
+                    });
+                });
+
+                CompletedDraftPieChartWidget.instance.update();
+            }
+        },
+
+        closeDropdown: (_this) => {
+            _this.$el.find(".dropdown-menu").removeClass("show").prev().attr("aria-expanded", "false");
+        }
+    }
+};
+chartWidgets["COMPLETED_DRAFT_PIE_CHART_WIDGET"] = CompletedDraftPieChartWidget;
+
+const CompletedDraftPieChartWidgetConfig = {
+    $el: $.scope("COMPLETED_DRAFT_PIE_CHART_WIDGET_CONF"),
+
+    main: CompletedDraftPieChartWidget,
+
+    init: function () {
+        const _this = this;
+
+        WidgetCommonConfig.bind.fields(_this);
+        WidgetCommonConfig.bind.buttons(_this);
+
+        /**
+         * WidgetConfig 창이 열릴때, 모든 데이터를 초기화 한다.
+         */
+        _this.$el.on("show.bs.modal", function () {
+            WidgetCommonConfig.reload(_this);
+        });
+
+        _this.$el.on("hidden.bs.modal", function () {
+        });
+    },
+
+    close: function () {
+        const _this = this;
+
+        _this.$el.modal("hide");
+    }
+};
+CompletedDraftPieChartWidgetConfig.init();

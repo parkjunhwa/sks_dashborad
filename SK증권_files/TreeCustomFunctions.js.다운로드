@@ -1,0 +1,114 @@
+/**
+ * @file 솔루피아 jQuery 정의 함수
+ * @author jason, Moon.
+ * @see https://api.jquery.com/
+ * @requires jQuery
+ * @requires module:_TREE
+ * @module jQuery.extension
+ */
+
+/**
+ * @function treeInit
+ * @description data-role 데이터 속성값이 tree 인 HTMLElement 에 대하여 tree 로 설정한다.
+ * @example <caption>HTML:</caption>
+ * <!-- data-scope 데이터 속성 - 식별자로 이용하며, id 속성과 다르게 중복된 속성값을 입력 가능 -->
+ * <!-- data-role 데이터 속성 - 식별자로 이용하며, id 속성과 다르게 중복된 속성값을 입력 가능, ex.) "tree" -->
+ * <div data-scope="tree1" data-role="tree"></div>
+ * @example <caption>JAVAScript:</caption>
+ * $.scope("tree1").treeInit({});
+ * @param {object} config JSON 타입의 부가 정보, _TREE.init() 의 options 매개변수 참조
+ * @throws {Error} 대상 엘리먼트를 찾지 못했습니다
+ * @throws {Error} 대상 엘리먼트가 1개 이상 발견되었습니다
+ */
+$.fn.treeInit = function (config) {
+    var _this = this;
+
+    if (_this.attr("data-role") !== undefined && _this.data("role") === "tree") {
+        config.target = _this;
+    } else {
+        var target = _this.find("[data-role=tree]");
+
+        target.assertOne("tree");
+
+        config.target = target;
+    }
+
+    _TREE.init(config);
+};
+
+/**
+ * @function reloadTree
+ * @description data-role 데이터 속성값이 tree 인 HTMLElement 에 대하여 reload 를 처리한다.
+ * @example <caption>HTML:</caption>
+ * <!-- data-scope 데이터 속성 - 식별자로 이용하며, id 속성과 다르게 중복된 속성값을 입력 가능 -->
+ * <!-- data-role 데이터 속성 - 식별자로 이용하며, id 속성과 다르게 중복된 속성값을 입력 가능, ex.) "tree" -->
+ * <div data-scope="tree1" data-role="tree"></div>
+ * @example <caption>JAVAScript:</caption>
+ * $.scope("tree1").treeInit({});
+ * $.scope("tree1").reloadTree({
+ *     url: "/test",
+ *     parameters: {key1: "value1", key1: "value2"}
+ * }, function (response) {
+ *     console.log("success");
+ * });
+ * @param {object} config JSON 타입의 부가 정보, _TREE.reload() 의 options 매개변수 참고
+ * @param {function} callBackFunc 응답 성공시 호출될 callback 함수, ex.) function (response) {}
+ * @throws {Error} 대상 엘리먼트를 찾지 못했습니다
+ * @throws {Error} 대상 엘리먼트가 1개 이상 발견되었습니다
+ */
+$.fn.reloadTree = function (config, callBackFunc) {
+    var _this = this;
+
+    if (_this.attr("data-role") !== undefined && _this.data("role") === "tree") {
+        config.target = _this;
+    } else {
+        var target = _this.find("[data-role=tree]");
+
+        target.assertOne("tree");
+
+        config.target = target;
+    }
+
+    _TREE.reload(config, callBackFunc);
+};
+
+/**
+ * @function getTree
+ * @description tree 로 설정된 HTMLElement 를 포함하는 jQuery 객체 가져오기
+ * @example <caption>HTML:</caption>
+ * <!-- data-scope 데이터 속성 - 식별자로 이용하며, id 속성과 다르게 중복된 속성값을 입력 가능 -->
+ * <!-- data-role 데이터 속성 - 식별자로 이용하며, id 속성과 다르게 중복된 속성값을 입력 가능, ex.) "tree" -->
+ * <div data-scope="tree1" data-role="tree"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var response = [
+ *     {"id": "ajson1", "parent": "#", "text": "Simple root node", "icon": "fal fa-folder mr-1", "item1": "item11"},
+ *     {"id": "ajson2", "parent": "#", "text": "Root node 2", "item1": "item21"},
+ *     {"id": "ajson3", "parent": "ajson2", "text": "Child 1", "icon": "fal fa-file-alt mr-1", "item1": "item31"},\
+ *     {"id": "ajson4", "parent": "ajson2", "text": "Child 2", "item1": "item41"},
+ *     {"id": "ajson5", "parent": "ajson4", "text": "Child 21", "item1": "item51"}
+ * ];
+ * $.scope("tree1").treeInit({});
+ * _TREE.addLiAttr(response);
+ * $.scope("tree1").getTree().settings.core.data = response;
+ * $("#tree1").jstree(true).refresh();
+ * @throws {Error} 대상 엘리먼트를 찾지 못했습니다
+ * @throws {Error} 대상 엘리먼트가 1개 이상 발견되었습니다
+ * @returns {jQuery} tree HTMLElement 가 포함된 jQuery 객체
+ */
+$.fn.getTree = function () {
+    var _this = this;
+
+    var $el;
+
+    if (_this.attr("data-role") !== undefined && _this.data("role") === "tree") {
+        $el = _this;
+    } else {
+        var target = _this.find("[data-role=tree]");
+
+        target.assertOne("tree");
+
+        $el = target;
+    }
+
+    return _TREE.getTree($el);
+};

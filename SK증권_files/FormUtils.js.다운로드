@@ -1,0 +1,485 @@
+/**
+ * @file 폼 Utils
+ * @author jason, Moon
+ * @see https://api.jquery.com/
+ * @requires jQuery
+ * @module _FORM
+ */
+(function (window, jQuery) {
+"use strict";
+var pluginName = "_FORM";
+
+if (null == jQuery) return;
+if (!window.hasOwnProperty(pluginName) || null == window[pluginName]) window[pluginName] = {
+    datePickerMode: {
+        DAY: 0,
+        MONTH: 1,
+        YEAR: 2
+    },
+
+    /**
+     * @memberOf module:_FORM
+     * @description 첨부 가능 파일 확장자, 참고) "doc", "docx", "xls", "xlsx", "ppt", "pptx", "pem", "cer", "zip", "png", "jpg", "jpeg", "pdf"
+     * @example
+     * console.log("isAllowed(maybe true): " + _FORM.allowedExtensions.indexOf("doc"));
+     */
+    allowedExtensions: ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "pem", "cer", "zip", "png", "jpg", "jpeg", "pdf"],
+
+    /**
+     * @function datepicker
+     * @see https://bootstrap-datepicker.readthedocs.io/en/latest/
+     * @description HTMLInputElement 에 대하여 날짜를 입력할 수 있게 설정한다.
+     * @example <caption>HTML:</caption>
+     * <!-- data-start-date 데이터 속성 - 시작 일자 기본값을 설정, _DATES.parseDate() 참고
+     * <!-- data-end-date 데이터 속성 - 종료 일자 기본값을 설정, _DATES.parseDate() 참고
+     * <!-- data-today-btn 데이터 속성 - 오늘 날짜를 선택하는 버튼 표시 여부, ex.) "true", "false"
+     * <!-- data-clear-btn 데이터 속성 - 입력된 날짜를 지우는 버튼 표시 여부, ex.) "true", "false"
+     * <!-- data-period 데이터 속성 - 두 항목으로 기간을 입력할 경우 입력 가능한 기간을 제한하기 위한 숫자값
+     * <!-- data-period-unit 데이터 속성 - 두 항목으로 기간을 입력할 경우 입력 가능한 기간을 제한하기 위한 값의 단위, ex.) "DAY", "MONTH", "YEAR"
+     * <!-- data-datepicker-range-from 데이터 속성 - 두 항목으로 기간을 입력할 경우 시작 일자 항목으로 설정시 추가
+     * <!-- data-datepicker-range-to 데이터 속성 - 두 항목으로 기간을 입력할 경우 종료 일자 항목으로 설정시 추가
+     * <input type="text" id="datepicker1" />
+     * <input type="text" id="datepicker2" data-start-date="-1w" data-end-date="yesterday" /><!-- 일주일전부터 어제 사이의 날짜 선택 가능 -->
+     * <input type="text" id="datepicker22" />
+     * <input type="text" id="datepicker3" data-today-btn="true" data-clear-btn="true" /><!-- 오늘 선택 버튼 표시, clear 버튼 표시 -->
+     * <input type="text" id="datepicker33" />
+     * <input type="text" id="startDatepicker4" data-datepicker-range-from /><!-- 시작 일자를 입력하는 항목 -->
+     * <input type="text" id="endDatepicker4" data-datepicker-range-to data-period="7" data-period-unit="DAY" /><!-- 종료 일자를 입력하는 항목, 시작 일자 + 7일내 입력 가능 -->
+     * @example <caption>JAVAScript:</caption>
+     * var datepicker1 = document.getElementById("datepicker1");
+     * var datepicker2 = document.getElementById("datepicker2");
+     * var datepicker22 = document.getElementById("datepicker22");
+     * var datepicker3 = document.getElementById("datepicker3");
+     * var datepicker33 = document.getElementById("datepicker33");
+     * var startDatepicker4 = document.getElementById("startDatepicker4");
+     * var endDatepicker4 = document.getElementById("endDatepicker4");
+     * _FORM.datepicker(datepicker1);
+     * _FORM.datepicker(datepicker2);
+     * _FORM.datepicker(datepicker22, {startDate: "-1w", endDate: "yesterday"}); // datepicker2 와 동일하게 일주일전부터 어제 사이의 날짜 선택 가능
+     * _FORM.datepicker(datepicker3);
+     * _FORM.datepicker(datepicker33, {todayBtn: "true"}); // 오늘 선택 버튼 표시, clear 버튼 표시
+     * _FORM.datepicker(startDatepicker4);
+     * _FORM.datepicker(endDatepicker4);
+     * @param {HTMLInputElement} target 날짜를 입력할 수 있게 설정할 text 타입의 HTMLInputElement 객체
+     * @param {object} [config] datepicker 부가 정보, ex.)
+     * @param {boolean} [config.startDate] 시작 일자 기본값을 설정, _DATES.parseDate() 참고, data-start-date 데이터 속성과 동일
+     * @param {boolean} [config.endDate] 종료 일자 기본값을 설정, _DATES.parseDate() 참고, data-end-date 데이터 속성과 동일
+     * @param {boolean} [config.todayBtn] 오늘 날짜를 선택하는 버튼 표시 여부, data-today-btn 데이터 속성과 동일
+     * @param {boolean} [config.clearBtn] 입력된 날짜를 지우는 버튼 표시 여부, data-clear-btn 데이터 속성과 동일
+     * @requires jQuery.datepicker
+     * @listens change
+     */
+    datepicker: (target, config) => {
+        const $target = $(target);
+        // ex.) "today", "yesterday", "tomorrow", "-1d", "-1w", "-1m", "-1y", "+1d", "+1w", "+1m", "+1y", "+6m +1y", ...
+        const dataStartDate = $target.attr("data-start-date");
+        const dataEndDate = $target.attr("data-end-date");
+        const dataTodayBtn = $target.attr("data-today-btn");
+        const dataClearBtn = $target.attr("data-clear-btn");
+
+        if (null != dataStartDate) config.startDate = dataStartDate;
+        if (null != dataEndDate) config.endDate = dataEndDate;
+        if (null != dataTodayBtn) {
+            if ("true" === dataTodayBtn) {
+                config.todayBtn = true;
+            } else if ("false" === dataTodayBtn) {
+                config.todayBtn = false;
+            }
+        }
+        if ("false" === dataClearBtn) config.clearBtn = false;
+
+        $target.datepicker(config);
+
+        // BEGIN datepicker range ------------------------------------------------------------------------------------------
+        if (null != $(target).attr("data-datepicker-range-from")) {
+            const $rangeTo = $target.siblings("[data-datepicker-range-to]:first");
+            const dataPeriod = $target.attr("data-period");
+            const dataPeriodUnit = $target.attr("data-period-unit") || "DAY";
+
+            log.debug("dataPeriodUnit ::: " + dataPeriodUnit);
+
+            const changeDate = function () {
+                const val = $target.val();
+                let endDate = $rangeTo.val();
+                $rangeTo.datepicker(config);
+
+                if (v.isBlank(val)) {
+                    $rangeTo.datepicker("setStartDate", null);
+                    $rangeTo.datepicker("setEndDate", null);
+                } else {
+                    $rangeTo.datepicker("setStartDate", val);
+                    if (v.isBlank(dataPeriod)) {
+                        $rangeTo.datepicker("setEndDate", null);
+                    } else {
+                        if (dataPeriodUnit === "DAY") {
+                            endDate = _DATES.addDays(dataPeriod, val)
+                        } else if (dataPeriodUnit === "MONTH") {
+                            endDate = _DATES.addMonths(dataPeriod, val);
+                        } else { // YEAR
+                            endDate = _DATES.addYears(dataPeriod, val);
+                        }
+
+                        $rangeTo.datepicker("setEndDate", endDate);
+                    }
+
+                    if (_DATES.isAfter($rangeTo.val(), endDate)) {
+                        $rangeTo.datepicker("setDate", endDate); /* cf.) dataPeriod 를 초과하지 않게 가능한 최대값으로 변경. */
+                    }
+                }
+            }
+
+            // cf.) 직접 입력할 수 있어 datepicker changeDate event 대신 change 를 이용한다.
+            $target.change(() => {
+                changeDate();
+            });
+
+            changeDate();
+        }
+        // E N D datepicker range ------------------------------------------------------------------------------------------
+    },
+
+    /**
+     * @function daterangepicker
+     * @see https://momentjs.com/
+     * @see http://www.daterangepicker.com/
+     * @description HTMLInputElement 에 대하여 기간을 입력할 수 있게 설정한다.
+     * @example <caption>HTML:</caption>
+     * <!-- data-period 데이터 속성 - 입력 가능한 기간을 제한하기 위한 일수 -->
+     * <!-- data-start-date 데이터 속성 - 시작 일자 기본값 설정, _DATES.parseDate() 참고 -->
+     * <!-- data-end-date 데이터 속성 - 종료 일자 기본값 설정, _DATES.parseDate() 참고 -->
+     * <input type="text" id="daterangepicker1" data-start-date="-1m,-6d" data-end-date="-1m" data-period="365" />
+     * @example <caption>JAVAScript:</caption>
+     * var daterangepicker1 = document.getElementById("daterangepicker1");
+     * _FORM.daterangepicker(daterangepicker1);
+     * @param {HTMLInputElement} target 기간을 입력할 수 있게 설정할 text 타입의 HTMLInputElement 객체
+     * @param {object} [config] JSON 타입의 부가 정보
+     * @param {string} [config.startDate] 시작 일자 기본값을 설정, data-start-date 데이터 속성과 동일
+     * @param {string} [config.endDate] 종료 일자 기본값 설정, data-end-date 데이터 속성과 동일
+     * @param {object} [config.maxSpan] JSON 타입의 기간 제한 정보
+     * @param {string | number} [config.maxSpan.days] 입력 가능한 기간을 제한하기 위한 일수, data-period 데이터 속성과 동일
+     * @param {function} [callback] 값이 변경된 경우 호출되는 함수, ex.) function (startDateMoment, endDateMoment) {}
+     * @param {moment} callback.startDateMoment 변경된 시작 일자
+     * @param {moment} callback.endDateMoment 변경된 종료 일자
+     * @requires moment
+     * @requires jQuery.daterangepicker
+     */
+    daterangepicker: function (target, config, callback) {
+        const $target = $(target);
+        const $modal = $target.parentsUntil(".modal").last();
+
+        if ("DIV" === $modal.prop("tagName")) addOption(config, "parentEl", $modal.parent())
+        if (undefined !== $target.attr("data-period")) addOption(config, "maxSpan", {});
+        addOption(config["maxSpan"], "days", $target.attr("data-period"));
+        addOption(config, "startDate", _DATES.parseDate($target.attr("data-start-date")));
+        addOption(config, "endDate", _DATES.parseDate($target.attr("data-end-date")));
+
+        $target.daterangepicker(config, callback);
+
+        // nested ----------
+        function addOption(source, key, value) {if (undefined !== value) source[key] = value;}
+    },
+
+    /**
+     * @function timepicker
+     * @see https://timepicker.co/
+     * @property {null} data-timepicker-range-from HTMLInputElement 사용자정의 속성, 두 항목으로 시작/종료시각을 입력할 경우 시작 항목으로 설정시 추가
+     * @property {null} data-timepicker-range-to HTMLInputElement 사용자정의 속성, 두 항목으로 시작/종료시각을 입력할 경우 종료 항목으로 설정시 추가
+     * @description HTMLInputElement 에 대하여 시간을 입력할 수 있게 설정한다.
+     * @example <caption>HTML:</caption>
+     * <input type="text" id="startTimepicker1" data-timepicker-range-from maxlength="5" />
+     * <input type="text" id="endTimepicker1" data-timepicker-range-to maxlength="5" />
+     * @example <caption>JAVAScript:</caption>
+     * var startTimepicker1 = document.getElementById("startTimepicker1");
+     * var endTimepicker1 = document.getElementById("endTimepicker1");
+     * _FORM.timepicker(startTimepicker1);
+     * _FORM.timepicker(endTimepicker1);
+     * @param {HTMLInputElement} target daterangepicker 를 적용할 text 타입의 HTMLInputElement 객체
+     * @param {object} [config] JSON 타입의 부가 정보
+     * @requires jQuery.timepicker
+     * @listens "timeFormatError"
+     * @listens "timeRangeError"
+     * @listens "changeTime"
+     */
+    timepicker: function (target, config) {
+        // var defaultConfig = {
+        //     'timeFormat': 'H:i',
+        //     "wrapHours": false,
+        //     "lang": { am: 'am', pm: 'pm', AM: 'AM', PM: 'PM', decimal: '.', mins: '분', hr: '시간', hrs: '시간' }
+        // };
+        //
+        // config = $.extend(true, defaultConfig, config);
+        //
+        $(target)
+            .timepicker(config)
+            .on("timeFormatError", (event) => {
+                $(event.target).val("").change();
+            })
+            .on("timeRangeError", (event) => {
+                $(event.target).val("").change();
+            });
+
+        // BEGIN timepicker range 관련 ------------------------------------------------------------------------------
+        var isDataTimepickerRangeFrom = (null != $(target).attr("data-timepicker-range-from"));
+        var isDataTimepickerRangeTo = (null != $(target).attr("data-timepicker-range-to"));
+
+        if (isDataTimepickerRangeFrom) {
+            // starting timepicker 에 event 추가
+            $(target).on("changeTime", (event) => {
+                const $rangeTo = $(target).find("~ input[data-field-format=timepicker][data-timepicker-range-to]:first");
+                if ("" === $(event.target).val()) {
+                    $rangeTo.timepicker("option", {
+                        "durationTime": null,
+                        "disableTimeRanges": []
+                    });
+                } else {
+                    const date = $(event.target).timepicker("getTime");
+                    const durationTime = moment(date).format("HH:mm");
+                    date.setMinutes(date.getMinutes() + 1);
+                    $rangeTo
+                        .timepicker("option", {
+                            "durationTime": durationTime,
+                            "disableTimeRanges": [["00:00", moment(date).format("HH:mm")]]
+                        }).val(moment(date).format("HH:mm"))
+                        .change();
+                }
+            });
+        } else if (isDataTimepickerRangeTo) {
+            // ending timepicker 에 event 추가
+            $(target).timepicker("option", {
+                "showDuration": true
+            });
+        }
+        // E N D timepicker range 관련 ------------------------------------------------------------------------------
+    },
+
+    /**
+     * @function isDeniedExtensions
+     * @description 허용되지 않은 파일 확장자 여부 가져오기
+     * @example <caption>HTML:</caption>
+     * <form id="form1">
+     *     <input type="file" id="file1" name="file1" />
+     * </form>
+     * @example <caption>JAVAScript:</caption>
+     * var file1 = document.getElementById("file1");
+     * file1.addEventListener("change", function () {
+     *     if (0 === this.value.length) return;
+     *     if (_FORM.isDeniedExtensions($(this), _FORM.allowedExtensions)) {
+     *         alert("해당 파일은 허용되지 않습니다.");
+     *         document.getElementById("form1").reset();
+     *     }
+     * });
+     * @param {jQuery} target file 타입 HTMLInputElement 의 jQuery 객체
+     * @param {array} allowedExtensions 배열 타입의 허용된 파일 확장자
+     * @return {boolean} 파일 확장자가 허용되지 않는지, 그 여부
+     */
+    isDeniedExtensions: function (target, allowedExtensions) { // unAllowable extension
+        var isDenied = false;
+
+        if (target) {
+            $.each(target, function (index, element) {
+                var fileName = $(element).val();
+                var extension = fileName.replace(/^.*\./, '');
+
+                if (!($.inArray(extension.toLowerCase(), allowedExtensions) > -1)) {
+                    isDenied = true;
+
+                    return false;
+                }
+            });
+        }
+
+        return isDenied;
+    },
+
+    /**
+     * @function isOverSize
+     * @description 파일 크기 초과 여부 가져오기
+     * @example <caption>HTML:</caption>
+     * <form id="form1">
+     *     <input type="file" id="file1" name="file1" />
+     * </form>
+     * @example <caption>JAVAScript:</caption>
+     * var file1 = document.getElementById("file1");
+     * file1.addEventListener("change", function () {
+     *     if (0 === this.value.length) return;
+     *     if (_FORM.isOverSize($(this))) {
+     *         alert("해당 파일의 크기 한도를 초과하였습니다.");
+     *         document.getElementById("form1").reset();
+     *     }
+     * });
+     * @param {jQuery} target file 타입 HTMLInputElement 의 jQuery 객체
+     * @return {boolean} 초과 여부
+     */
+    isOverSize: function (target) {
+        var _2MB = 2097152;
+
+        var isOver = false;
+
+        if (target) {
+            $.each(target, function (index, element) {
+                if (element.files.length > 0) {
+                    isOver = element.files[0].size > _2MB;
+                }
+
+                if (isOver) return false;
+            });
+        } else return isOver = false;
+
+        return isOver;
+    },
+
+    /**
+     * @function isExistsAttachments
+     * @description 선택한 첨부파일이 존재하는지 반환한다.
+     * @example <caption>HTML:</caption>
+     * <form id="form1">
+     *     <input type="file" name="file1" />
+     *     <input type="button" id="button1" value="Save" />
+     * </form>
+     * @example <caption>JAVAScript:</caption>
+     * var button1 = document.getElementById("button1");
+     * button1.addEventListener("click", function () {
+     *     if (!_FORM.isExistsAttachments()) {
+     *         alert("파일이 선택되지 않았습니다.");
+     *         return;
+     *     }
+     *     _AJAX.post({
+     *         url: "/test"
+     *         data: new FormData($("#form1")[0]);
+     *         success: function () {
+     *             console.log("success");
+     *         }
+     *     });
+     * });
+     * @returns {boolean} 파일 선택 여부
+     */
+    isExistsAttachments: function () {
+        var sourceFiles = $("input[type=file]");
+
+        var isExists = false;
+
+        $.each(sourceFiles, function (index, element) {
+            // if ($(element).val() != "") isExists = true;
+            if ($(element).val() !== "") isExists = true;
+
+            return false;
+        });
+
+        return isExists;
+    },
+
+    /**
+     * @typedef {object} TOP_TEXT
+     * @property {string} ALL (전체) 추가
+     * @property {string} CHOICE (선택) 추가
+     * @property {string} NONE 생략
+     * @description HTMLSelectElement 내 최상단에 추가할 HTMLOptionElement text 속성값을 지정한다.
+     * @example <caption>HTML:</caption>
+     * <select id="select1"></select>
+     * @example <caption>JAVAScript:</caption>
+     * _FORM.renderCombo($("#select1"), [{value: "value1", label: "label1"}, {value: "value2", label: "label2"}], _FORM.TOP_TEXT.ALL);
+     * console.log("html(maybe <option value=''>(전체)</option><option value='value1'>label1</option><option value='value2'>label2</option>): " + $("#select1").html());
+     */
+    TOP_TEXT: {
+        ALL: "ALL",
+        CHOICE: "CHOICE",
+        NONE: "NONE"
+    },
+
+    /*
+     * @function renderCombo
+     * @description HTMLSelectElement 내 HTMLOptionElement 객체를 추가한다.
+     * @example <caption>HTML:</caption>
+     * <select id="select1"></select>
+     * @example <caption>JAVAScript:</caption>
+     * _FORM.renderCombo($("#select1"), [{value: "value1", label: "label1"}, {value: "value2", label: "label2"}]);
+     * console.log("html(maybe <option value='value1'>label1</option><option value='value2'>label2</option>): " + $("#select1").html());
+     * @param {jQuery} target 바인딩할 대상객체
+     * @param {array} constant: label(option명), value(option값)
+     * @param {module:_FORM~TOP_TEXT} [topText] HTMLSelectElement 내 최상단에 추가할 HTMLOptionElement text 속성값을 지정한다.
+     * @requires module:MustacheUtils
+     */
+    // renderCombo: function (target, constant, topText) {
+    //
+    //     var template = "";
+    //
+    //     switch (topText) {
+    //         case this.TOP_TEXT.ALL:
+    //             template = "<option value=''>(전체)</option>";
+    //             break;
+    //         case this.TOP_TEXT.CHOICE:
+    //             template = "<option value=''>(선택)</option>";
+    //             break;
+    //         case this.TOP_TEXT.NONE:
+    //             template = "";
+    //             break;
+    //         default:
+    //             template = "";
+    //             break;
+    //     }
+    //
+    //     template += "{{#@each}}" +
+    //         "{{#@value}}" +
+    //         "<option value={{@value.value}}>{{@value.label}}</option>" +
+    //         "{{/@value}}" +
+    //         "{{/@each}}";
+    //
+    //     target.html(MustacheUtils.render(template, constant));
+    // },
+
+    /*
+     * @function renderCheck
+     * @description checkbox 와 label 을 추가한다.
+     * @example <caption>HTML:</caption>
+     * <div id="parent1"></div>
+     * @example <caption>JAVAScript:</caption>
+     * _FORM.renderCheck($("#parent"), [{value: "value1", label: "label1"}]);
+     * console.log($("#parent").html());
+     * @example <caption>Browser's Console:</caption>
+     * <label class='checkbox-inline'><input type='checkbox' name='chkChannelCode' id='value1' value='label1'> <i></i>label1</label>
+     * @param {jQuery} targets checkbox 를 추가할 부모 HTMLElement 의 jQuery 객체
+     * @param {array} constant 배열 타입의 data, ex.) [{value: "value1", label: "label1"}]
+     * @requires module:MustacheUtils
+     */
+    // renderCheck: function (targets, constant) {
+    //     $.each(targets, function (index, target) {
+    //         var template = "";
+    //
+    //         template += "{{#@each}}" +
+    //             "{{#@value}}" +
+    //             /*"<option value='{{@value.value}}'>{{@value.label}}</option>" +*/
+    //             "<label class='checkbox-inline'>" +
+    //             // "<input type='checkbox' name='chkChannelCode' checked='checked' value='{{@value.value}}'> <i></i>{{@value.label}}" +
+    //             "<input type='checkbox' name='chkChannelCode' id='{{@value.value}}' value='{{@value.value}}'> <i></i>{{@value.label}}" +
+    //             "</label>" +
+    //             "{{/@value}}" +
+    //             "{{/@each}}";
+    //
+    //         $(target).html(MustacheUtils.render(template, constant));
+    //     });
+    // },
+
+    /**
+     * @function multipleClear
+     * @description HTMLElement 의 value 속성을 지운다.
+     * @example <caption>HTML:</caption>
+     * <input type="text" id="text1" value="value1" />
+     * <input type="text" id="text2" value="value2" />
+     * @example <caption>JAVAScript:</caption>
+     * _FORM.multipleClear($("#text1"), "text2");
+     * @param {arguments} arguments HTMLElement 의 id 속성값 또는 HTMLElement 의 jQuery 객체
+     */
+    multipleClear: function () {
+
+        for (var index = 0; index < arguments.length; index++) {
+            var argValue = arguments[index];
+
+            if (_.isObject(argValue)) {
+                argValue.val("");
+            } else if (_.isString(argValue)) {
+                $("#" + argValue).val("");
+            }
+        }
+    }
+};
+})(window, window["jQuery"]);

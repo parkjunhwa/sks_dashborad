@@ -1,0 +1,107 @@
+const WeeklyCompletedDraftChartWidget = {
+    $el: $.scope("WEEKLY_COMPLETED_DRAFT_CHART_WIDGET"),
+
+    config: {
+        widgetId: "WEEKLY_COMPLETED_DRAFT_CHART"
+    },
+
+    instance: null,
+
+    chartConfig : {
+        data: {
+            table: 'datatable'
+        },
+        chart: {
+            type: 'column',
+            // height : (9 / 17 * 60) + '%',
+            height : 250,
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            categories: null
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b>'
+        },
+        series: null
+    },
+
+    init: function () {
+       WeeklyCompletedDraftChartWidget.reload()
+    },
+
+    reload: function () {
+        const _this = this;
+        _AJAX.get({
+            url: `/api/approval/dashboard/weekly-completed-draft-by`,
+            success: function (response) {
+                if (null == response || null == response["labels"]){
+                    return;
+                }
+                _this.chartConfig.series = response["datasets"];
+                _this.chartConfig.xAxis.categories = response["labels"];
+
+                for (let i = 0; i < _this.chartConfig.series.length; i++) {
+                    _this.chartConfig.series[i].name = _i18n.t(response["datasets"][i].name);
+                };
+
+                Highcharts.chart(_this.config.widgetId, _this.chartConfig);
+            }
+        });
+        WidgetCommon.methods.changeConfig(_this, _this.$el.getFieldParameters());
+
+    },
+
+    methods: {
+        randomize: () => {
+            if (null != WeeklyCompletedDraftChartWidget.instance) {
+                WeeklyCompletedDraftChartWidget.instance.config.data.datasets.forEach(function (dataset) {
+                    dataset.data = dataset.data.map(function () {
+                        return Math.round(Math.random() * (100));
+                    });
+                });
+
+                WeeklyCompletedDraftChartWidget.instance.update();
+            }
+        }
+    },
+};
+chartWidgets["WEEKLY_COMPLETED_DRAFT_CHART_WIDGET"] = WeeklyCompletedDraftChartWidget;
+
+const WeeklyCompletedDraftChartWidgetConfig = {
+    $el: $.scope("WEEKLY_COMPLETED_DRAFT_CHART_WIDGET_CONF"),
+
+    main: WeeklyCompletedDraftChartWidget,
+
+    init: function () {
+        const _this = this;
+
+        WidgetCommonConfig.bind.fields(_this);
+        WidgetCommonConfig.bind.buttons(_this);
+
+        /**
+         * WidgetConfig 창이 열릴때, 모든 데이터를 초기화 한다.
+         */
+        _this.$el.on("show.bs.modal", function () {
+            WidgetCommonConfig.reload(_this);
+        });
+
+        _this.$el.on("hidden.bs.modal", function () {
+        });
+    },
+
+    close: function () {
+        const _this = this;
+
+        _this.$el.modal("hide");
+    }
+};
+WeeklyCompletedDraftChartWidgetConfig.init();

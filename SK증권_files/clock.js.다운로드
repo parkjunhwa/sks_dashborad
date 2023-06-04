@@ -1,0 +1,69 @@
+const ClockWidget = {
+    $el: $.scope("CLOCK".concat("_").concat("WIDGET")),
+
+    config: {
+        widgetId: "CLOCK",
+        color: "",
+        textColor: "",
+        borderStyle: "",
+        borderWeight: "",
+        borderColor: "",
+        icon: "",
+        iconSize: ""
+    },
+
+    init: function () {
+        const _this = this;
+
+        let clock;
+
+        function updateClock() {
+            clock = clock.add(1, _DATES.SECONDS);
+            _this.$el.scope("now").text(clock.format("hh:mm:ss A"));
+        }
+
+        _AJAX.get({
+            url: "/api/system/now",
+            success: function (now) {
+                clock = moment(now);
+
+                updateClock();
+
+                setInterval(updateClock, 1000);
+            }
+        });
+
+        WidgetCommon.methods.changeConfig(_this, _this.$el.getFieldParameters());
+    }
+};
+ClockWidget.init();
+
+const ClockWidgetConfig = {
+    $el: $.scope("CLOCK".concat("_").concat("WIDGET_CONF")),
+
+    main: ClockWidget,
+
+    init: function () {
+        const _this = this;
+
+        WidgetCommonConfig.bind.fields(_this);
+        WidgetCommonConfig.bind.buttons(_this);
+
+        /**
+         * WidgetConfig 창이 열릴때, 모든 데이터를 초기화 한다.
+         */
+        _this.$el.on("show.bs.modal", function () {
+            WidgetCommonConfig.reload(_this);
+        });
+
+        _this.$el.on("hidden.bs.modal", function () {
+        });
+    },
+
+    close: function () {
+        const _this = this;
+
+        _this.$el.modal("hide");
+    }
+};
+ClockWidgetConfig.init();

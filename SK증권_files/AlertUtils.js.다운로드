@@ -1,0 +1,210 @@
+/**
+ * @file ALERT Utils
+ * @author youks@solupia.co.kr
+ * @see https://api.jquery.com/
+ * @see http://bootboxjs.com/
+ * @requires jQuery
+ * @requires bootbox
+ * @module _ALERT
+ */
+(function (window, jQuery, bootbox) {
+"use strict";
+var pluginName = "_ALERT";
+
+if (null == jQuery || null == bootbox) return;
+if (!window.hasOwnProperty(pluginName) || null == window[pluginName]) window[pluginName] = {
+    /**
+     * @function confirm
+     * @description 확인/취소를 선택할 수 있는 메시지박스를 표시한다.
+     * @example
+     * _ALERT.confirm("저장하시겠습니까?", function () {
+     *     console.log("confirmed");
+     * }, function () {
+     *     console.log("cancelled");
+     * });
+     * @param {string} message 메시지 내용
+     * @param {function} [callback] 확인 선택시 호출되는 함수
+     * @param {function} [callbackIfFalse] 취소 선택시 호출되는 함수
+     */
+    "confirm": (message, callback, callbackIfFalse) => {
+        bootbox.confirm({
+            "title": "<i class='fal fa-info-circle text-info mr-2'></i> " + message,
+            "message": " ",/*"<span><strong>Warning:</strong> This action is not reversable. You will lose all your layout settings.</span>",*/
+            "centerVertical": true,
+            "swapButtonOrder": false,
+            "buttons": {
+                "cancel": {
+                    "label": _i18n.t('취소'),
+                    "className": 'btn-default'
+                },
+                "confirm": {
+                    "label": _i18n.t('확인'),
+                    "className": 'btn-info shadow-0'
+                }
+            },
+            "className": "modal-alert",
+            "closeButton": false,
+            "callback": function (result) {
+                if (result === true) {
+                    const selectedPanel = $(this).closest('.panel');
+
+                    const killPanel = function () {
+
+                        selectedPanel.fadeOut(500,function(){
+                            /* remove panel */
+                            $(this).remove();
+
+                            if (myapp_config.debugState)
+                            console.log( "panel id:" + selectedPanel.attr('id') + " | action: removed" );
+                        });
+
+                    };
+
+                    killPanel();
+
+                    if (null != callback) callback();
+                } else {
+                    if (null != callbackIfFalse) callbackIfFalse();
+                }
+            }
+        });
+    },
+
+    /**
+     * @function msg
+     * @description 알림 메시지박스를 표시한다.
+     * @example
+     * _ALERT.msg("저장이 완료되었습니다.", function () {
+     *     console.log("confirmed");
+     * });
+     * @param {string} message 메시지 내용
+     * @param {function} [callback] 확인 선택시 호출되는 함수
+     */
+    "msg": (message, callback) => {
+        bootbox.alert({
+            "title": "<i class='fal fa-info-circle text-info mr-2'></i> " + message,
+            "message": " ",/*"<span><strong>Warning:</strong> This action is not reversable. You will lose all your layout settings.</span>",*/
+            "centerVertical": true,
+            "swapButtonOrder": false,
+            "buttons": {
+                "ok": {
+                    "label": _i18n.t('확인'),
+                    "className": 'btn-info shadow-0'
+                }
+            },
+            "className": "modal-alert",
+            "closeButton": false,
+            "callback": () => {
+                if (null != callback) callback();
+            }
+        });
+    },
+
+    /**
+     * @function error
+     * @description 오류 메시지박스를 표시한다.
+     * @example
+     * _ALERT.error("오류가 발생했습니다.", function () {
+     *     console.log("confirmed");
+     * });
+     * @param {string} message 메시지 내용
+     * @param {function} [callback] 확인 선택시 호출되는 함수
+     */
+    "error": (message, callback) => {
+        return bootbox.alert({
+            "title": "<i class='fal fa-times-circle text-danger mr-2'></i> " + message,
+            "message": " ",/*"<span><strong>Warning:</strong> This action is not reversable. You will lose all your layout settings.</span>",*/
+            "centerVertical": true,
+            "swapButtonOrder": false,
+            "buttons": {
+                "ok": {
+                    "label": _i18n.t('확인'),
+                    "className": 'btn-danger shadow-0'
+                }
+            },
+            "className": "modal-alert",
+            "closeButton": false,
+            "callback": () => {
+                if (null != callback) callback();
+            }
+        });
+    },
+
+    /**
+     * @function prompt
+     * @description 입력할 수 있는 메시지박스를 표시한다.
+     * @example
+     * _ALERT.prompt("IP 입력", function(result) {
+     *     if (null != result) {
+     *         console.log("확인 = " + result);
+     *         $.scope(SCOPE.CRITERIA).find("[data-field=searchItem1]").val(result);
+     *     } else {
+     *         console.log("취소");
+     *     }
+     * }, function () {
+     *     var $textBox = $(this).find("input.bootbox-input");
+     *     _MASK.initialize($textBox.get(0), _MASK.TYPES.IP);
+     *     $textBox.val($.scope(SCOPE.CRITERIA).find("[data-field=searchItem1]").val());
+     * }, function (event, message, callback, onShow, onHidden, isCancelled) {
+     *     var $textBox;
+     *
+     *     if (isCancelled) return;
+     *     $textBox = $(this).find("input.bootbox-input");
+     *     if (0 === $textBox.val().length) {
+     *         _TOAST.error("필수 입력");
+     *         _ALERT.prompt(message, callback, onShow, onHidden);
+     *     }
+     * });
+     * @param {string} message 메시지 내용
+     * @param {function} [callback] 확인/취소 선택시 호출되는 함수, 참고) function (result) {}
+     * @param {boolean} callback.result 확인 선택시 true, 취소 선택시 false
+     * @param {function} [onShow] 메시지박스가 보여질 때 호출되는 함수, 참고) function (event) {}
+     * @param {Event} onShow.event Event 타입의 객체
+     * @param {function} [onHidden] 메시지박스가 사라질 때 호출되는 함수, 참고) function (event, message, callback, onShow, onHidden) {}
+     * @param {Event} onHidden.event Event 타입의 객체
+     * @param {string} onHidden.message 매개변수 message 와 동일
+     * @param {function} onHidden.callback 매개변수 callback 와 동일
+     * @param {function} onHidden.onShow 매개변수 onShow 와 동일
+     * @param {function} onHidden.onHidden 매개변수 onHidden 와 동일
+     * @returns {jQuery} 메시지박스 HTMLElement 의 jQuery 객체
+     */
+    "prompt": (message, callback, onShow, onHidden) => {
+        var $modal = bootbox.prompt({
+            "title": "<i class='fal fa-info-circle text-info mr-2'></i><input type=\"hidden\" data-custom-id=\"cancelYn\" value=\"Y\" />" + message,
+            "message": " ",
+            "centerVertical": true,
+            "swapButtonOrder": false,
+            "buttons": {
+                "cancel": {
+                    "label": _i18n.t('취소'),
+                    "className": 'btn-default'
+                },
+                "confirm": {
+                    "label": _i18n.t('확인'),
+                    "className": 'btn-info shadow-0'
+                }
+            },
+            "className": "custom-modal-prompt",
+            "closeButton": false,
+            "inputType": "text",
+            "callback": (result) => {
+                if (null != result) { /* 확인 클릭시.. */
+                    $modal.find("[data-custom-id=cancelYn]").val("N");
+                }
+                if (null != callback) callback(result);
+            },
+            "show": false
+        });
+        if (null != onShow  ) $modal.on("show.bs.modal", onShow);
+        if (null != onHidden) {
+            $modal.on("hidden.bs.modal", function (event) {
+                var boundOnHidden = onHidden.bind(this);
+                var isCancelled = ("Y" === $modal.find("[data-custom-id=cancelYn]").val());
+                boundOnHidden(event, message, callback, onShow, onHidden, isCancelled);
+            });
+        }
+        $modal.modal("show");
+        return $modal;
+    }
+};
+})(window, window["jQuery"], window["bootbox"]);
