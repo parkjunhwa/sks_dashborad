@@ -1344,74 +1344,179 @@
 <!-- END Page Header -->
 <!-- BEGIN Page Content -->
 <!-- the #js-page-content id is needed for some plugins to initialize -->
-<main id="js-page-content" role="sub" class="page-content">
+<main id="js-page-content" role="main" class="page-content">
     <a href="javascript:void(0);" id="randomize" class="btn btn-primary btn-lg btn-icon rounded-circle waves-effect waves-themed text-light" style="position: fixed; bottom: 4.1rem; right: 5rem; z-index:932;">
     <i class="fal fa-random"></i>
     </a>
-    <div class="row sub_pannnel_area">
-        
-        <!-- Background image -->
-        <div class="sub_jumboton" style="background-image: url('./images/top_img_business.png');">
-        </div>
-        <!-- Background image -->
-        
-        <div class="sub_content">
-            <div class="business">
-                <h1 class="text-center">법무소개</h1>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>그룹</th>
-                                <th>팀</th>
-                                <th>주요 R&amp;R</th>
-                                <th>비고</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td rowspan="4">법무그룹</td>
-                                <td>Compliance팀</td>
-                                <td><ul>
-                                        <li>Compliance Program 기획·운영</li>
-                                        <li>준법점검, Compliance Risk 사전 점검 및 예방활동</li>
-                                        <li>규정 및 지침 통합 관리</li>
-                                        <li>부정청탁금지법 이슈 관리, 준법.윤리교육</li>
-                                    </ul></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>사업법무팀</td>
-                                <td><ul>
-                                        <li>사업조직에 대한 자문계약검토) 및 관련 분쟁 (영업배상, 소송 등) 대응</li>
-                                        <li>Beyond Security, 융합보안 등 신규사업 관련 대응</li>
-                                        <li>사업관련 규제 대응 / 인장 관리</li>
-                                    </ul></td>
-                                <td>지원조직<br>
-                                    사업총과 산하 조직,<br>
-                                    캡스텍</td>
-                            </tr>
-                            <tr>
-                                <td>성장법무팀</td>
-                                <td><ul>
-                                        <li>Corporate Governance, HR/노무 관련 자문 및 분쟁/소송 대응</li>
-                                        <li>M&amp;A 등 전략적 Project 지원 / 지적재산권(IPR) 관리</li>
-                                        <li>ICT Family와 법무 이슈 협업 Coordination.</li>
-                                    </ul></td>
-                                <td>지원조직<br>
-                                    재표이사 직속 조직</td>
-                            </tr>
-                            <tr>
-                                <td>GR운영팀</td>
-                                <td><ul>
-                                        <li>경비업법령 관련 인·허가</li>
-                                    </ul></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <div class="row main_pannnel_area">
+        <div class="col-lg-4 col-xlg-4">
+            <div class="card card_01 ani_size">
+                <div class="card_header">
+                    <h2 class="main_pannel_tl">법무공지</h2>
+                    <a href="#" type="button" class="btn btn_more"><img src="images/icon_more.svg">더보기</a>
+                </div>
+                <div class="main_jumboton" style="background-image: url('./images/main_01.png');"></div>
+                <div class="notice_item">
+                    <div class="notice_item_box">
+                        <a href="#" class="notice_item">
+                            <p class="hint-text font-montserrat fs-11 overflow-ellipsis no-margin">2022-04-04</p>
+                            <h5 class="notice-text no-margin overflow-ellipsis">계약서 원본 보관 프로세스 변경 공지</h5>
+                        </a>
+                        <a href="#" class="notice_item">
+                            <p class="hint-text font-montserrat fs-11 overflow-ellipsis no-margin">2022-05-09</p>
+                            <h5 class="notice-text no-margin overflow-ellipsis">Tmap 주차서비스 이용 계약서 업데이트 안내</h5>
+                        </a>
+                        <a href="#" class="notice_item">
+                            <p class="hint-text font-montserrat fs-11 overflow-ellipsis no-margin">2022-05-09</p>
+                            <h5 class="notice-text no-margin overflow-ellipsis">Tmap 주차서비스 이용 계약서 업데이트 안내</h5>
+                        </a>
+                    </div>
+                </div>
+                <div class="main_team_header">
+                    <h2 class="main_pannel_tl">법무그룹 팀별 업무소개</h2>
+                    <!--<a href="#" type="button" class="btn btn_more"><img src="images/icon_more.svg">더보기</a>-->
+                </div>
+                <div class="main_team">
+                    <div class="main_team_area">
+                        <div class="main_team_item">
+                            <div class="main_team_item_title_01">Compliance팀</div>
+                            <div class="main_team_item_text">
+                                <ul>
+                                    <li>Compliance Program 기획·운영</li>
+                                    <li>준법점검, Compliance Risk 사전 점검 및 예방활동</li>
+                                    <li>규정 및 지침 통합 관리</li>
+                                    <li>부정청탁금지법 이슈 관리, 준법.윤리교육</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="main_team_item">
+                            <div class="main_team_item_title_02">사업법무팀</div>
+                            <div class="main_team_item_text">
+                                <ul>
+                                    <li>사업조직에 대한 자문계약검토) 및 관련 분쟁 (영업배상, 소송 등) 대응</li>
+                                    <li>Beyond Security, 융합보안 등 신규사업 관련 대응</li>
+                                    <li>사업관련 규제 대응 / 인장 관리</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="main_team_item">
+                            <div class="main_team_item_title_03">성장법무팀</div>
+                            <div class="main_team_item_text">
+                                <ul>
+                                    <li>Corporate Governance, HR/노무 관련 자문 및 분쟁/소송 대응</li>
+                                    <li>M&amp;A 등 전략적 Project 지원 / 지적재산권(IPR) 관리</li>
+                                    <li>ICT Family와 법무 이슈 협업 Coordination.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="main_team_item">
+                            <div class="main_team_item_title_04">GR운영팀</div>
+                            <div class="main_team_item_text">
+                                <ul>
+                                    <li>경비업법령 관련 인·허가</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="col-lg-4 col-xlg-4">
+            <div class="card card_02 ani_size">
+                <div class="card_header">
+                    <h2 class="main_pannel_tl">주요서식(표준계약서 등)</h2>
+                    <a href="#" type="button" class="btn btn_more"><img src="images/icon_more.svg">더보기</a>
+                </div>
+                <div class="main_jumboton" style="background-image: url('./images/main_02.png');"></div>
+                <div class="formdown_area auto-overflow">
+                    <a href="#" class="formdown_list_item">
+                        <div>표준 NDA 계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>표준 MOU</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>시스템 구축 계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>라이선스 공급 계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>보안컨설팅 계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>솔루션 공급 계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>표준임대차 계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                    <a href="#" class="formdown_list_item">
+                        <div>Tmap 주차서비스 이용계약서</div>
+                        <img src="images/download.svg" alt="다운로드">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-xlg-4">
+            <div class="card card_03 ani_size">
+                <div class="card_header">
+                    <h2 class="main_pannel_tl">내 업무방</h2>
+                    <a href="#" type="button" class="btn btn_more"><img src="images/icon_more.svg">더보기</a>
+                </div>
+                <div class="main_jumboton" style="background-image: url('./images/main_03.png');"></div>
+                <div class="workroom_area auto-overflow">
+                    <a href="#" class="workroom_list_item">
+                    <div class="work_item_state">검토대기</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                    <a href="#" class="workroom_list_item disabled">
+                    <div class="work_item_state">승인완료</div>
+                    <div class="work_item_title">[현대오토에버]현대자동차/기아 CC S보안시스템 글로벌 통합운영 협력사 선정(국내) 계약서 검토의 건.</div>
+                    </a>
+                </div>
+            </div>
+            <a href="#">
+            <div class="card card_04 ani_size">
+                <h2 class="main_pannel_tl">법무검토 의뢰하기
+                    <div class="more"><img src="images/more_arrow.svg" alt="more"></div>
+                </h2>
+            </div>
+            </a>
         </div>
     </div>
 </main>
