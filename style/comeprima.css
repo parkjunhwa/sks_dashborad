@@ -118,33 +118,24 @@
     margin-right: 8px;
     margin-top: -2px;
 }
-/*
+.form_link {
+    padding: 10px 20px 20px 20px;
+}
 .form_link a {
-    padding: 30px 20px;
-    flex-wrap: wrap;
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
+    background-color: #2D0B04;
+    padding: 15px 20px;
+    display: block;
+    border-radius: 8px;
 }
-.form_link h2 {
-    margin-bottom: 0;
-    justify-content: start;
-    align-items: center;
-    flex-direction: row;
-}
-.form_link h2:hover {
-    color: #FF0000;
-}
-.form_link h2:active {
-    color: #FF0000;
-}
-.form_link .btn_more {
-    justify-content: start;
-    align-items: center;
-    flex-direction: row;
+.form_link a .more {
+    margin-left: 12px;
     margin-top: 2px;
 }
-*/
+.form_link h2 {
+    color: #fff;
+    margin: 0;
+    font-weight: 300;
+}
 .main_team_header {
     margin-top: 30px;
     padding: 0px 30px;
