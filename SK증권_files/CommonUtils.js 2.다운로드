@@ -1,0 +1,348 @@
+/**
+ * @file Common Utils
+ * @author jason, Moon
+ * @see https://api.jquery.com/
+ * @requires jQuery
+ * @module log
+ */
+(function (window) {
+"use strict";
+var pluginName = "log";
+
+if (!window.hasOwnProperty(pluginName) || null == window[pluginName]) window[pluginName] = {
+    /**
+     * @function info
+     * @description console 창에 로그 표시
+     * @example
+     * log.info("new log!");
+     * log.info({key: "value"});
+     * log.info([{key: "value1"}, {key: "value2"}]);
+     * @param {string | object | array} message 로그 내용
+     */
+    info: function (message) {
+        if (typeof message === "string") {
+            console.log("$$ " + message);
+        } else if (typeof message === "object") {
+            console.dir(message);
+        }
+    },
+
+    /**
+     * @function debug
+     * @description debug 레벨인 경우 console 창에 로그 표시
+     * @example
+     * log.debug("new log!");
+     * log.debug({key: "value"});
+     * log.debug([{key: "value1"}, {key: "value2"}]);
+     * @param {string | object | array} [message] 로그 내용
+     */
+    debug: function (message) {
+        var logLevel = $("#profilesActive").val();
+
+        if (logLevel === "dev" || logLevel === "local") {
+            log.info("$$ " + message);
+        }
+    },
+
+    /**
+     * @function debugWithLine
+     * @description debug 레벨인 경우 console 창에 구분선과 함께 로그 표시
+     * @example
+     * log.debugWithLine("new log!");
+     * log.debugWithLine({key: "value"});
+     * log.debugWithLine([{key: "value1"}, {key: "value2"}]);
+     * @param {string | object | array} message 로그 내용
+     */
+    debugWithLine: function (message) {
+        var logLevel = $("#profilesActive").val();
+
+        if (logLevel === "dev" || logLevel === "local") {
+            log.line();
+            log.info("$$ " + message);
+            log.line();
+        }
+    },
+
+    /**
+     * @function line
+     * @description debug 레벨인 경우 console 창에 구분선 표시
+     * @example
+     * log.line();
+     * log.debug("new log!");
+     * log.line();
+     */
+    line: function () {
+        var logLevel = $("#profilesActive").val();
+
+        var dividingLine = "$$ ===================================== $$";
+
+        if (logLevel === "dev" || logLevel === "local") {
+            console.log(dividingLine);
+        }
+    }
+};
+})(window);
+
+(function () {
+    if (null == window["jQuery"]) return;
+
+    $('.modal').on('shown.bs.modal', function () {
+        if (window.AttachScope) {
+            if (AttachScope.targetId) {
+                if (_COMMON.isIE()) {
+                    DextUploadUtils.hideComponent();
+                }
+            }
+        }
+    });
+    $('.modal').on('hide.bs.modal', function () {
+        if (window.AttachScope) {
+            if (AttachScope.targetId) {
+                if (_COMMON.isIE()) {
+                    DextUploadUtils.showComponent();
+                }
+            }
+        }
+    });
+
+    /**
+     * @module _COMMON
+     */
+    window._COMMON = {
+        // 사용안함
+        // paging: function (options, onPageClick) {
+        //     this.destroyPaging(options.target);
+        //
+        //     options.target.find("[data-role=pagination]").twbsPagination({
+        //         totalPages: options.target.getFieldValue("totalPage"),
+        //         visiblePages: 10,
+        //         startPage: options.pageNo,
+        //         itemOnPage: 10,
+        //         initiateStartPageClick: false,
+        //         hideOnlyOnePage: false,
+        //         first: '&laquo;&laquo;',
+        //         prev: '&laquo;',
+        //         next: '&raquo;',
+        //         last: '&raquo;&raquo;',
+        //         onPageClick: onPageClick
+        //     });
+        // },
+
+        // 사용안함
+        // destroyPaging: function (target) {
+        //     target.find("[data-role=pagination]").twbsPagination("destroy");
+        // },
+
+        /**
+         * @function isIE
+         * @description Internet Explorer 브라우저 사용 여부
+         * @example
+         * if (_COMMON.isIE()) console.log("using IE!");
+         * @returns {boolean} 여부
+         */
+        isIE: function () {
+            var agent = navigator.userAgent.toLowerCase();
+
+            return (navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1);
+        },
+
+        // 사용안함
+        // getByteLength: function(strings) {
+        //     return (function (s, b, i, c) {
+        //         for (b = i = 0; c = s.charCodeAt(i++); b += c >> 11 ? 3 : c >> 7 ? 2 : 1) ;
+        //         return b
+        //     })(strings);
+        // },
+
+        /**
+         * @function notIE
+         * @description Internet Explorer 브라우저가 아닌지, 그 여부
+         * @example
+         * if (!_COMMON.isIE()) console.log("using IE!");
+         * @returns {boolean} 여부
+         */
+        notIE: function () {
+            return !this.isIE();
+        },
+
+        /**
+         * @function getJSONValue
+         * @description JSON 값 가져오기
+         * @example
+         * console.log("data(maybe value11): " + _COMMON.getJSONValue({"key1": {"key11": "value11"}}, "key1.key11"));
+         * @param {object} cause 값을 가져올 JSON 객체
+         * @param {string} properties 구분자 "." 를 포함할 수 있는 값을 가져올 key 값 표현식, ex.) "key1.key11"
+         * @returns {object} JSON 객체의 value
+         */
+        getJSONValue: function (cause, properties) {
+            var result = JSON.parse(cause);
+
+            var PROPERTIES;
+            var LENGTH;
+
+            if (null != properties && 0 < properties.length) {
+
+                PROPERTIES = properties.split(".");
+                LENGTH = PROPERTIES.length;
+
+                for (var index = 0; index < LENGTH; index++) {
+
+                    if (null == result) break;
+                    result = result[PROPERTIES[index]];
+                }
+            }
+
+            return result;
+        },
+
+        /**
+         * @function move
+         * @description 웹페이지 이동
+         * @example
+         * _COMMON.move("/test");
+         * @param {string} url 이동할 URL
+         */
+        move: function (url) {
+            location.href = url;
+        },
+
+        /**
+         * @function merge
+         * @description JSON 객체를 포함하는 두 배열을 병합해 새로운 배열을 생성한다. 동일하지 않은 JSON 객체(모든 값이 같은)만 병합된다. keyName 을 입력한 경우 key 값이 동일하지 않은 JSON 객체만 병합된다.
+         * @example
+         * var first = [{"a": 1, "b": "1"}];
+         * var second = [{"a": 1, "b": "22"}];
+         * var third = _COMMON.merge(first, second);
+         * console.log(JSON.stringify(third)); // = [{"a": 1, "b": "1"}, {"a": 1, "b": "22"}]
+         * var forth = _COMMON.merge(first, second, "a");
+         * console.log(JSON.stringify(forth)); // = [{"a": 1, "b": "1"}]
+         * var fifth = _COMMON.merge(first, second, "c");
+         * console.log(JSON.stringify(fifth)); // = [{"a": 1, "b": "1"}, {"a": 1, "b": "22"}]
+         * @param {array} sourceArray1 배열 타입의 객체
+         * @param {array} sourceArray2 배열 타입의 또 다른 객체
+         * @param {string} [keyName] 매개변수 sourceArray1 및 sourceArray2 배열내 JSON 객체의 key
+         * @returns {array} 새로 병합된 배열
+         */
+        merge: function (sourceArray1, sourceArray2, keyName) {
+            var result = clone(sourceArray1);
+
+            sourceArray2.forEach(function (aRow) {
+                if (isSureThat(result).hasNo(aRow, keyName)) result.push(clone(aRow));
+            });
+
+            return result;
+
+            // nested ----------
+            function clone(aObject) {
+                return JSON.parse(JSON.stringify(aObject));
+            }
+
+            function isSureThat(one) {
+                return {
+                    hasNo: function (aSomething, keyName) {
+                        return one.every(function (aRow) {
+                            return isSureThat(null == keyName ? aRow : aRow[keyName])
+                                .isNotEqualTo(null == keyName ? aSomething : aSomething[keyName]);
+                        });
+                    },
+
+                    isNotEqualTo: function (aSomething) {
+                        return !(isSureThat(one).isEqualTo(aSomething));
+                    },
+
+                    isEqualTo: function (aSomething) {
+                        if (null == one || null == aSomething) return false;
+                        if (one.toString() !== aSomething.toString()) return false;
+                        if ("[object Object]" !== one.toString()) return (one === aSomething);
+                        if (Object.keys(one).length !== Object.keys(aSomething).length) return false;
+
+                        return Object.keys(one).every(function (key) {return isSureThat(one[key]).isEqualTo(aSomething[key]);});
+                    }
+                };
+            }
+        },
+
+        /**
+         * @function deleteByKeys
+         * @description JSON 객체로 구성된 배열에서 특정 값을 가지면 삭제한다.
+         * @example
+         * var source = [{"a": 1, "b": "1"}, {"a": 2, "b": "1"}, {"a": 3, "b": "1"}];
+         * var result = _COMMON.deleteByKeys(source, "a", [2]);
+         * console.log(JSON.stringify(result)); // = [{"a": 1, "b": "1"}, {"a": 3, "b": "1"}];
+         * @param {array} source 배열 타입의 객체
+         * @param {string} keyName 매개변수 source 배열내 JSON 객체의 key
+         * @param {array} keyValueArray 배열에서 삭제할 JSON 객체의 value
+         * @returns {array} 지정된 JSON 객체가 삭제된 새로운 배열
+         */
+        deleteByKeys: function (source, keyName, keyValueArray) {
+            let result = clone(source);
+
+            function clone(aObject) {
+                return JSON.parse(JSON.stringify(aObject));
+            }
+
+            lodash.remove(result, (obj) => {
+                let contains = false;
+
+                keyValueArray.forEach((key) => {
+                    if (obj[keyName] === key) {
+                        contains = true;
+                    }
+                });
+
+                return contains;
+            });
+
+            return result;
+        },
+
+        /**
+         * @function deleteAll
+         * @description 배열내 지정된 JSON 객체 삭제
+         * @example
+         * var source = [{"a": 1, "b": "1"}, {"a": 2, "b": "1"}, {"a": 3, "b": "1"}];
+         * var result = _COMMON.deleteAll(source, {"a": 2, "b": "1"});
+         * console.log(JSON.stringify(result)); // = [{"a": 1, "b": "1"}, {"a": 3, "b": "1"}];
+         * @param {array} source 삭제할 배열
+         * @param {object} target JSON 타입의 삭제할 객체
+         * @returns {array} 지정된 JSON 객체가 삭제된 새로운 배열
+         */
+        deleteAll: function (source, target) {
+            let result = clone(source);
+
+            function clone(aObject) {
+                return JSON.parse(JSON.stringify(aObject));
+            }
+
+            function isObjectEquals(obj, target) {
+                return JSON.stringify(obj) === JSON.stringify(target);
+            }
+
+            lodash.remove(result, (obj) => {
+                let contains = false;
+
+                target.forEach((targetObj) => {
+                   if (isObjectEquals(obj, targetObj)) {
+                       contains = true;
+                   }
+                });
+
+                return contains;
+            });
+
+            return result;
+        },
+
+        /**
+         * @function extension
+         * @description 입력된 파일경로에서 파일 확장자를 가져온다.
+         * @example
+         * consoloe.log("extension(maybe .txt): " + _COMMON.extension("a.txt"));
+         * @param {string} fileName 확장자를 가져올 파일명
+         * @returns {string} 구분자 . 를 포함한 파일 확장자 소문자
+         */
+        extension: function (fileName) {
+            return fileName.substr(fileName.lastIndexOf('.')).toLowerCase();
+        }
+    };
+})();

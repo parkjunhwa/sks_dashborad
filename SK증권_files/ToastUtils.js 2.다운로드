@@ -1,0 +1,111 @@
+/**
+ * jQuery Javascript File 및 toastr 를 include 해야 이용할 수 있다.
+ * @file Toast Utils
+ * @author jason, Moon
+ * @see https://api.jquery.com/
+ * @see https://github.com/CodeSeven/toastr
+ * @see https://codeseven.github.io/toastr/demo.html
+ * @requires jQuery
+ * @requires toastr
+ * @module _TOAST
+ */
+(function (window) {
+"use strict";
+var pluginName = "_TOAST";
+
+if (null == window["jQuery"] || window.hasOwnProperty(pluginName)) return;
+window[pluginName] = {
+    /**
+     * @memberOf module:_TOAST
+     * @description 부가 설정 기본값
+     * @property {boolean} progressBar=true progress bar 표시 여부
+     * @property {number} timeOut=2000 timeout 설정값
+     * @property {string} positionClass="toast-bottom-right" 위치 관련 class 속성값
+     */
+    DEFAULT_OPTIONS: {
+        progressBar: true,
+        timeOut: 3000,
+        positionClass: "toast-bottom-right"
+    },
+
+    /**
+     * @function error
+     * @description 오류 메시지 박스를 보여준다.
+     * @example
+     * _TOAST.error("오류가 발생했습니다.");
+     * @param {string} message 메시지 내용
+     * @param {object} [options] JSON 타입 부가 정보, 참고) https://github.com/CodeSeven/toastr#other-options
+     */
+    error: function (message, options) {
+        if (options !== undefined) {
+            _.extend(this.DEFAULT_OPTIONS, options);
+
+            toastr.options = this.DEFAULT_OPTIONS;
+        } else {
+            toastr.options = this.DEFAULT_OPTIONS;
+        }
+
+        toastr.error(message);
+    },
+
+    /**
+     * @function info
+     * @description 알림 메시지 박스를 보여준다.
+     * @example
+     * _TOAST.info("조회가 완료되었습니다.");
+     * @param {string} message 메시지 내용
+     * @param {object} [options] JSON 타입 부가 정보, 참고) https://github.com/CodeSeven/toastr#other-options
+     */
+    info: function (message, options) {
+        if (options !== undefined) {
+            _.extend(this.DEFAULT_OPTIONS, options);
+
+            toastr.options = this.DEFAULT_OPTIONS;
+        } else {
+            toastr.options = this.DEFAULT_OPTIONS;
+        }
+
+        toastr.info(message);
+    },
+
+    /**
+     * @function success
+     * @description 성공 메시지 박스를 보여준다.
+     * @example
+     * _TOAST.success("저장이 완료되었습니다.");
+     * @param {string} message 메시지 내용
+     * @param {object} [options] JSON 타입 부가 정보, 참고) https://github.com/CodeSeven/toastr#other-options
+     */
+    success: function (message, options) {
+        if (options !== undefined) {
+            _.extend(this.DEFAULT_OPTIONS, options);
+
+            toastr.options = this.DEFAULT_OPTIONS;
+        } else {
+            toastr.options = this.DEFAULT_OPTIONS;
+        }
+
+        toastr.success(message);
+    },
+
+    /**
+     * @function warning
+     * @description 경고 메시지 박스를 보여준다.
+     * @example
+     * _TOAST.warning("저장이 완료되었습니다.");
+     * @param {string} message 메시지 내용
+     * @param {object} [options] JSON 타입 부가 정보, 참고) https://github.com/CodeSeven/toastr#other-options
+     */
+    warning: function (message, options) {
+        if (options !== undefined) {
+            _.extend(this.DEFAULT_OPTIONS, options);
+
+            toastr.options = this.DEFAULT_OPTIONS;
+        } else {
+            toastr.options = this.DEFAULT_OPTIONS;
+        }
+
+        toastr.warning(message);
+    }
+};
+})(window);

@@ -1,0 +1,424 @@
+/**
+ * @file Handlebars Helper
+ * @see https://api.jquery.com/
+ * @see https://handlebarsjs.com/
+ * @requires jQuery
+ * @requires Handlebars
+ * @module HandlebarsHelper
+ */
+/**
+ * @module HandlebarsHelper
+ * @function select
+ * @description HTMLSelectElement 내 value 속성값이 일치하는 HTMLOptionElement 을 선택 처리한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     <select>
+ *         {{#select column1}}
+ *         <option value="value1">option1</option>
+ *         <option value="value2">option2</option>
+ *         {{/select}}
+ *     </select>
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: "value2"};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <select>
+ *         <option value="value1">option1</option>
+ *         <option value="value2" selected="selected">option2</option>
+ *     </select>
+ * </div>
+ * @param {string} value 검색할 value 속성값
+ * @returns {string} selected 속성이 추가된 HTMLOptionElement HTML 문자열
+ */
+Handlebars.registerHelper('select', function (value, options) {
+    var $el = $('<select />').html(options.fn(this));
+    $el.find('[value="' + value + '"]').attr({'selected': 'selected'});
+    return $el.html();
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function isOne
+ * @description 매개변수 number 가 1 인지, 그 여부에 맞춰 HTMLElement 를 선택적으로 출력한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#isOne column1}}
+ *     <div id="display1">text1</div>
+ *     {{else}}
+ *     <div id="notDisplay"></div>
+ *     {{/isOne}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: 1};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div id="display1">text1</div>
+ * </div>
+ * @param {object} number 1 과 비교할 값
+ * @returns {string} Helper block context 내용 일부분
+ */
+Handlebars.registerHelper("isOne", function (number, options) {
+    if (1 === number) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function isZero
+ * @description 매개변수 number 가 0 인지, 그 여부에 맞춰 HTMLElement 를 선택적으로 출력한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#isZero column1}}
+ *     <div id="notDisplay"></div>
+ *     {{else}}
+ *     <div id="display1">text1</div>
+ *     {{/isZero}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: 1};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div id="display1">text1</div>
+ * </div>
+ * @param {object} number 0 과 비교할 값
+ * @returns {string} Helper block context 내용 일부분
+ */
+Handlebars.registerHelper("isZero", function (number, options) {
+    if (0 === number) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function isNull
+ * @description 매개변수 arg 가 null/"" 인지, 그 여부에 맞춰 HTMLElement 를 선택적으로 출력한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#isNull column1}}
+ *     <div id="display1">text1</div>
+ *     {{else}}
+ *     <div id="notDisplay"></div>
+ *     {{/isNull}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: null};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div id="display1">text1</div>
+ * </div>
+ * @param {object} arg null/'' 과 비교할 값
+ * @returns {string} Helper block context 내용 일부분
+ */
+Handlebars.registerHelper("isNull", function (arg, options) {
+    if (arg === null || arg === '') {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function json
+ * @description JSON 타입의 객체를 문자열로 변환한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#each this}}
+ *     <div data-value='{{{json this}}}'></div>
+ *     {{/each}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = [{column1: "value1"}, {column1: "value2"}];
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div data-value="{&quot;column1&quot;:&quot;value1&quot;}"></div>
+ *     <div data-value="{&quot;column1&quot;:&quot;value2&quot;}"></div>
+ * </div>
+ * @param {object} data JSON 객체
+ * @returns {string} 변환된 문자열
+ */
+Handlebars.registerHelper("json", function (data) {
+    return JSON.stringify(data);
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function contains
+ * @description 매개변수 list 배열내 매개변수 value 가 존재하는지, 그 여부에 맞춰 HTMLElement 를 선택적으로 출력한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#contains "[1, 2, 3]" column1}}
+ *     <div id="display1">text1</div>
+ *     {{else}}
+ *     <div id="notDisplay"></div>
+ *     {{/contains}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: 2};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div id="display1">text1</div>
+ * </div>
+ * @param {string | array} list 검색할 배열
+ * @param {object} value 비교할 값
+ * @returns {string} Helper block context 내용 일부분
+ */
+Handlebars.registerHelper("contains", function (list, value, options) {
+    if ("string" === typeof list) {
+        list = eval(list);
+    }
+
+    if (_.contains(list, value)) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function equals
+ * @description 두 값이 동일한지, 그 여부에 맞춰 HTMLElement 를 선택적으로 출력한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#equals column1 column2}}
+ *     <div id="notDisplay"></div>
+ *     {{else}}
+ *     <div id="display1">text1</div>
+ *     {{/equals}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: 1, column2: 2};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div id="display1">text1</div>
+ * </div>
+ * @param {object} a 비교할 값
+ * @param {object} b 비교할 값
+ * @returns {string} Helper block context 내용 일부분
+ */
+Handlebars.registerHelper("equals", function (a, b, options) {
+    if (a === b) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function isBlank
+ * @description 입력된 값이 공백인지, 그 여부에 맞춰 HTMLElement 를 선택적으로 출력한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     {{#isBlank column1}}
+ *     <div id="notDisplay"></div>
+ *     {{else}}
+ *     <div id="display1">text1</div>
+ *     {{/isBlank}}
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: "a"};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <div id="display1">text1</div>
+ * </div>
+ * @param {object} value 비교할 값
+ * @returns {string} Helper block context 내용 일부분
+ */
+Handlebars.registerHelper("isBlank", function (value, options) {
+    if (v.isBlank(value)) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function concat
+ * @description 문자열 합치기
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     <select>
+ *         {{#each this}}
+ *         <option value="{{column1}}">{{concat column1 column2}}</div>
+ *         {{/each}}
+ *     </select>
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {column1: "value1", column2: "text1"};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <select>
+ *         <option value="value1">value1text1</option>
+ *     </select>
+ * </div>
+ * @param {string} a 합칠 문자열
+ * @param {string} b 합칠 문자열
+ * @returns {string} 합쳐진 문자열
+ */
+Handlebars.registerHelper("concat", function (a, b) {
+    return a + b;
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function getText
+ * @description data-scope 속성값 및 selector 표현식을 이용해 HTMLElement 를 검색하여 text 속성값을 가져온다.
+ * @example <caption>HTML:</caption>
+ * <div data-scope="modal">
+ *     <select data-field="code">
+ *         <option value="1">targetText1</option>
+ *         <option value="2">notTargetText</option>
+ *     </select>
+ * </div>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     <span>{{getText "modal" "select[data-field=code]>option[value=%s]" code}}</span>
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {code: "1"};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <span>targetText1</span>
+ * </div>
+ * @param {string} scopeNames 검색할 data-scope 속성값
+ * @param {string} selector 검색할 selector 표현식
+ * @param {string} [argument] selector 내 %s 를 대체할 문자열
+ * @returns {string} 검색된 HTMLElement 의 text 속성값
+ */
+Handlebars.registerHelper("getText", function (scopeNames, selector, argument) {
+    const newArgument = ("string" === typeof argument ? argument : "");
+    const newSelect = selector.replace("%s", newArgument);
+    const $el = $.scope(scopeNames).find(newSelect);
+    return $el.text();
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function getLabelText
+ * @description data-scope 속성값 및 selector 표현식을 이용해 HTMLLabelElement 를 검색하여 text 속성값을 가져온다.
+ * @example <caption>HTML:</caption>
+ * <div data-scope="modal">
+ *     <input type="radio" name="choice" data-field="choice" value="1" id="choice1" /><label for="choice1">targetText1</label>
+ *     <input type="radio" name="choice" data-field="choice" value="2" id="choice2" /><label for="choice2">notTarget</label>
+ * </div>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     <span>{{getLabelText "modal" "input[data-field=choice][value=%s]:radio" choice}}</span>
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {choice: "1"};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <span>targetText1</span>
+ * </div>
+ * @returns {string} 검색된 HTMLLabelElement 의 text 속성값
+ */
+Handlebars.registerHelper("getLabelText", function (scopeNames, selector, argument) {
+    const newArgument = ("string" === typeof argument ? argument : "");
+    const newSelect = selector.replace("%s", newArgument);
+    const $el = $.scope(scopeNames).find(newSelect);
+    return $.scope(scopeNames).find("label[for=" + $el.attr("id") + "]").text();
+});
+
+/**
+ * @module HandlebarsHelper
+ * @function formatFileSize
+ * @description 파일 크기 단위를 변환한다.
+ * @example <caption>HTML:</caption>
+ * <script id="handlebarsSource1" type="text/x-handlebars-template">
+ *     <span>{{formatFileSize fileSize}}</span>
+ * </script>
+ * <div id="target1"></div>
+ * @example <caption>JAVAScript:</caption>
+ * var data = {fileSize: 1000};
+ * var handlebarsSource1 = document.getElementById("handlebarsSource1").innerHTML;
+ * var newHTML = (Handlebars.compile(handlebarsSource1))(data);
+ * document.getElementById("target1").innerHTML = newHTML;
+ * console.log(document.getElementById("target1").outerHTML);
+ * @example <caption>Browser's Console:</caption>
+ * <div id="target1">
+ *     <span>1KB</span>
+ * </div>
+ * @returns {string} 변환된 파일 크기
+ */
+Handlebars.registerHelper("formatFileSize", function (size) {
+    var e = (Math.log(size) / Math.log(1024)) | 0;
+    return `${+(size / Math.pow(1024, e)).toFixed(0)}(${'KMGTPEZY'[e - 1] || ''}Byte)`;
+});
+
+Handlebars.registerHelper("toLowerCase", function (data) {
+    if (data) return data.toLowerCase();
+    else return data;
+});
+
+Handlebars.registerHelper('_i18n', function (messageKey) {
+    if(_i18n==undefined) {
+        console.log("■■■ [Handlebars.i18n-ERROR] _i18n undefined");
+        return messageKey;  //_i18n 미정의시 messageKey 그대로 리턴.
+    }
+
+    return _i18n.t(messageKey);
+});

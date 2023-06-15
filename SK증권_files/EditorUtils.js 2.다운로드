@@ -1,0 +1,143 @@
+/**
+ * @file EDITOR Utils
+ * @author youks@solupia.co.kr
+ * @see https://api.jquery.com/
+ * @see https://ui.toast.com/tui-editor/
+ * @requires jQuery
+ * @requires jQuery.toastuiEditor
+ * @module _EDITOR
+ */
+(function (window) {
+"use strict";
+var pluginName = "_EDITOR";
+
+if (!window.hasOwnProperty(pluginName) || null == window[pluginName]) window[pluginName] = {
+    "hasTuiEditor": function () {
+        return (null != window["jQuery"] && undefined !== $.fn.toastuiEditor);
+    },
+
+    "hasTuiEditorOld": function () { /* version: 1.4.10 */
+        return (null != window["jQuery"] && $.fn.toastuiEditor !== undefined);
+    },
+    // "hasOtherEditor": function () {
+    //     return false;
+    // }
+
+    /**
+     * @function initialize
+     * @description 초기화
+     * @example <caption>HTML:</caption>
+     * <div id="div1"></div>
+     * @example <caption>JAVAScript:</caption>
+     * var div1 = document.getElementById("div1");
+     * _EDITOR.initialize(div1);
+     * @param {HTMLElement} target HTML 편집기로 설정할 HTMLElement
+     */
+    "initialize": function (target) {
+        if (_EDITOR.hasTuiEditor()) {
+            var _that = $(target);
+
+            if ($(target).closest("table").length) console.error("tui-editor / IE11 / 다음 태그를 <table> 에 포함시키면 한글이 제대로 입력되지 않음: " + target.outerHTML);
+
+            _that.toastuiEditor({
+                "height": "100%",
+                "initialValue": _that.html(),
+                "previewStyle": "tab",
+                "initialEditType": "wysiwyg",
+                "usageStatistics": false /* boolean, send hostname to google analytics */
+            });
+
+            $("button.tui-image.tui-toolbar-icons").remove(); /* 이미지 삽입 제거 */
+        } else
+        if (_EDITOR.hasTuiEditorOld()) {
+            var _that = $(target);
+
+            _that.toastuiEditor({
+                "initialEditType": "wysiwyg",
+                "previewStyle": "tab",
+                "height": "100%",
+                "initialHtml": _that.html(),
+                "usageStatistics": false, /* boolean, send hostname to google analytics */
+                "exts": ["colorSyntax"]
+            });
+
+            $("button.tui-image.tui-toolbar-icons").remove(); /* 이미지 삽입 제거 */
+        } else {
+        }
+    },
+
+    /**
+     * @function isBlank
+     * @description 공백 여부
+     * @example <caption>HTML:</caption>
+     * <div id="div1"></div>
+     * @example <caption>JAVAScript:</caption>
+     * var div1 = document.getElementById("div1");
+     * _EDITOR.initialize(div1);
+     * if (_EDITOR.isBlank(div1)) alert("내용을 입력해주세요.");
+     * @param {HTMLElement} target _EDITOR.initialized() 함수로 초기화된 div HTMLElement
+     * @returns {boolean} 여부
+     */
+    "isBlank": function (target) {
+        var value;
+
+        if (_EDITOR.hasTuiEditor()) {
+            value = $(target).toastuiEditor("getHtml");
+        } else
+        if (_EDITOR.hasTuiEditorOld()) {
+            value = $(target).toastuiEditor("getValue");
+        } else {
+            value = target.innerText;
+        }
+
+        return (value === undefined || 0 === value.replace(/(\s*)/g, "").length);
+    },
+
+    /**
+     * @function getHtml
+     * @description HTML 가져오기
+     * @example <caption>HTML:</caption>
+     * <div id="div1"></div>
+     * @example <caption>JAVAScript:</caption>
+     * var div1 = document.getElementById("div1");
+     * _EDITOR.initialize(div1);
+     * console.log(_EDITOR.getHtml(div1));
+     * @param {HTMLElement} target _EDITOR.initialized() 함수로 초기화된 div HTMLElement
+     * @returns {string} HTML
+     */
+    "getHtml": function (target) {
+        if (_EDITOR.hasTuiEditor()) {
+            let html = $(target).toastuiEditor("getHtml").replace(/alert/g, "void").replace(/console.log/g, "void").replace(/document.write/g, "void");
+            return html;
+        }
+        else if (_EDITOR.hasTuiEditorOld()) {
+            let html = $(target).toastuiEditor("getHtml").replace(/alert/g, "void").replace(/console.log/g, "void").replace(/document.write/g, "void");
+            return html;
+        } else {
+            return target.innerHTML;
+        }
+    },
+
+    /**
+     * @function setHtml
+     * @description HTML 설정
+     * @example <caption>HTML:</caption>
+     * <div id="div1"></div>
+     * @example <caption>JAVAScript:</caption>
+     * var div1 = document.getElementById("div1");
+     * _EDITOR.initialize(div1);
+     * _EDITOR.setHtml(div1, "<table><thead><tr><td>column1</td></tr></thead><tbody><tr><td>value11</td></tr><tr><td>value21</td></tr></tbody></table>");
+     * @param {HTMLElement} target _EDITOR.initialized() 함수로 초기화된 div HTMLElement
+     */
+    "setHtml": function (target, html) {
+        if (_EDITOR.hasTuiEditor()) {
+            $(target).toastuiEditor("setHtml", html, false);
+        } else
+        if (_EDITOR.hasTuiEditorOld()) {
+            $(target).toastuiEditor("setValue", html, false); /* markdown + html */
+        } else {
+            target.innerHTML = html;
+        }
+    }
+};
+})(window);

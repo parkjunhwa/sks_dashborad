@@ -1,0 +1,81 @@
+/**
+ * SheetJS(https://sheetjs.com/) Javascript File 를 include 해야 이용할 수 있다.
+ * @file XLS Utils
+ * @author youks@solupia.co.kr
+ * @see https://api.jquery.com/
+ * @requires jQuery
+ * @module _XLS
+ */
+(function (window, XLSX) {
+if (null == XLSX || null != window["_XLS"]) return;
+
+window._XLS = {
+
+    /**
+     * @function writeFile
+     * @description FILE 쓰기
+     * @example
+     * _XLS.writeFile([
+     *     {
+     *         "sourceColumn1": "value11",
+     *         "sourceColumn2": "value12",
+     *         "sourceColumn3": "codeA",
+     *     },
+     *     {
+     *         "sourceColumn1": "value21",
+     *         "sourceColumn2": "value22",
+     *         "sourceColumn3": "codeB",
+     *     }
+     * ], {
+     *     "filename": "엑셀 파일명을 입력",
+     *     "header": {
+     *         "sourceColumn1": "컬럼1",
+     *         "sourceColumn2": "컬럼2",
+     *         "sourceColumn3": "컬럼3"
+     *     },
+     *     "each": function(i, e) {
+     *        switch (e.sourceColumn3) {
+     *            case "codeA":
+     *                e.sourceColumn3 = "codeNameA";
+     *                break;
+     *            case "codeB":
+     *                e.sourceColumn3 = "codeNameB";
+     *                break;
+     *        }
+     *     }
+     * });
+     * @param {array} source 엑셀 파일에 저장할 배열 타입의 DATA
+     * @param {object} option JSON 타입의 부가 정보
+     * @param {string} option.filename 엑셀 파일명
+     * @param {object} option.header JSON 타입의 헤더 정보, key: 매개변수 source 내 column 식별자, value: 엑셀 상단에 표시할 column 이름
+     * @param {module:_XLS~eachCallback} option.each source 내 column 값을 변경하는 함수
+     */
+    /**
+     * @callback module:_XLS~eachCallback
+     * @description writeFile 함수의 eachCallback 함수
+     * @param {number} index source 배열의 index
+     * @param {object} object source 배열 해당 index 의 JSON 타입 object
+     */
+    writeFile: function (source, option) {
+        var headerkeys = Object.keys(option.header);
+
+        $.each(source, function (i, e) {
+            if (null != option["each"]) option.each(i, e);
+
+            // 불필요한 key 제거
+            for (var key in e) {
+                if (0 > headerkeys.indexOf(key)) delete e[key];
+            }
+        });
+
+        // header 행 추가
+        source.unshift(option.header);
+
+        var ws = XLSX.utils.json_to_sheet(source, {"header": headerkeys, "skipHeader": true});
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, option.filename);
+        XLSX.writeFile(wb, option.filename + ".xlsx");
+    }
+
+}
+})(window, window["XLSX"]);

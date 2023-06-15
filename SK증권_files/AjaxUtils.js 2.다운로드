@@ -1,0 +1,509 @@
+/**
+ * @file AJAX Utils
+ * @author jason, Moon
+ * @see https://api.jquery.com/
+ * @requires jQuery
+ * @requires module:_COMMON
+ * @module _AJAX
+ */
+"use strict";
+
+var SAMPLE_RESULT = {
+    "apiStatus"   : "SUCCESS",
+    "resultList"  : null,
+    "resultObject": [],
+    "resultCount" : 0,
+    "pageInfo" : {},
+    "message"     : null
+};
+
+var METHOD = {
+    GET   : "GET",
+    POST  : "post",
+    PATCH : "PATCH",
+    PUT   : "PUT",
+    DELETE: "DELETE"
+};
+
+var APPLICATION_JSON_UTF8_VALUE = "application/json; charset=UTF-8";
+
+(function () {
+    if (null == window["jQuery"] || null == window["_COMMON"] || null != window["_AJAX"]) return;
+
+    window._AJAX = {
+
+        /**
+         * @function get
+         * @description GET 방식으로 JSON 데이터 비동기 HTTP 요청
+         * @example <caption>배열로 응답하는 경우:</caption>
+         * _AJAX.get({
+         *     url: "/test/array",
+         *     data: {
+         *         column1: "condition1",
+         *         currentPage: 1,
+         *         rowsPerPage: 10
+         *     }
+         *     success: function (response, totalPage, totalCount, rowsPerPage) {
+         *         console.log("success");
+         *         console.log("response: " + JSON.stringify(response));
+         *         console.log("totalPage: " + totalPage);
+         *         console.log("totalCount: " + totalCount);
+         *         console.log("rowsPerPage: " + rowsPerPage);
+         *     }
+         * });
+         * @example <caption>JSON 객체로 응답하는 경우:</caption>
+         * _AJAX.get({
+         *     url: "/test/json",
+         *     data: {
+         *         column1: "condition1"
+         *     }
+         *     success: function (response) {
+         *         console.log("success");
+         *         console.log("response: " + JSON.stringify(response));
+         *     }
+         * });
+         * @param {{}} cause JSON 타입의 부가 정보
+         * @param {string} cause.url 비동기 HTTP 요청 주소
+         * @param {{}} [cause.data] 요청시 함께 보낼 데이터가 포함된 JSON 타입의 객체, ex.) {column1: "condition1", column2: "condition2"}
+         * @param {function} [cause.success] 요청이 성공한 경우 호출되는 함수, 참고) function (response, totalPage, totalCount, rowsPerPage) {}
+         * @param {array | {}} cause.success.response 응답 결과가 포함된 배열/JSON 타입의 객체, ex.) [{"key1": "value1"}, {"key2": "value2"}], {"key11": "value11"}
+         * @param {number} cause.success.totalPage 전체 페이지수
+         * @param {number} cause.success.totalCount 전체 행 건수
+         * @param {number} cause.success.rowsPerPage 페이지당 행 건수
+         * @returns {jqXHR} jQuery XMLHttpRequest 객체, 참고) https://api.jquery.com/jQuery.ajax/#jqXHR
+         */
+        get: function (cause) {
+            cause.type = METHOD.GET;
+
+            return this.request(cause);
+        },
+
+        /**
+         * @function post
+         * @description POST 방식으로 JSON 데이터 비동기 HTTP 요청
+         * @example
+         * _AJAX.post({
+         *     url: "/test",
+         *     data: {
+         *         column1: "value1",
+         *         column2: "value2"
+         *     }
+         *     success: function (response) {
+         *         console.log("success");
+         *         console.log("response: " + JSON.stringify(response));
+         *     }
+         * });
+         * @param {{}} cause JSON 타입의 부가 정보
+         * @param {string} cause.url 비동기 HTTP 요청 주소
+         * @param {{}} [cause.data] 요청시 함께 보낼 데이터가 포함된 JSON 타입의 객체, ex.) {column1: "value1", column2: "value2"}
+         * @param {function} [cause.success] 요청이 성공한 경우 호출되는 함수, 참고) function (response) {}
+         * @param {{}} cause.success.response 응답 결과가 포함된 JSON 타입의 객체, ex.) {"key11": "value11"}
+         * @returns {jqXHR} jQuery XMLHttpRequest 객체, 참고) https://api.jquery.com/jQuery.ajax/#jqXHR
+         */
+        post: function (cause) {
+            cause.type = METHOD.POST;
+
+            return this.request(cause);
+        },
+
+        /**
+         * @function put
+         * @description PUT 방식으로 JSON 데이터 비동기 HTTP 요청
+         * @example
+         * _AJAX.put({
+         *     url: "/test",
+         *     data: {
+         *         column1: "value1",
+         *         column2: "value2"
+         *     }
+         *     success: function (response) {
+         *         console.log("success");
+         *         console.log("response: " + JSON.stringify(response));
+         *     }
+         * });
+         * @param {{}} cause JSON 타입의 부가 정보
+         * @param {string} cause.url 비동기 HTTP 요청 주소
+         * @param {{}} cause.data 요청시 함께 보낼 데이터가 포함된 JSON 타입의 객체, ex.) {column1: "value1", column2: "value2"}
+         * @param {function} [cause.success] 요청이 성공한 경우 호출되는 함수, 참고) function (response) {}
+         * @param {{}} [cause.success.response] 응답 결과가 포함된 JSON 타입의 객체, ex.) {"key11": "value11"}
+         * @returns {jqXHR} jQuery XMLHttpRequest 객체, 참고) https://api.jquery.com/jQuery.ajax/#jqXHR
+         */
+        put: function (cause) {
+            cause.type = METHOD.PUT;
+
+            return this.request(cause);
+        },
+
+        /**
+         * @function patch
+         * @description PATCH 방식으로 JSON 데이터 비동기 HTTP 요청
+         * @example
+         * _AJAX.patch({
+         *     url: "/test",
+         *     data: {
+         *         column1: "value1",
+         *         column2: "value2"
+         *     }
+         *     success: function (response) {
+         *         console.log("success");
+         *         console.log("response: " + JSON.stringify(response));
+         *     }
+         * });
+         * @param {{}} cause JSON 타입의 부가 정보
+         * @param {string} cause.url 비동기 HTTP 요청 주소
+         * @param {{}} cause.data 요청시 함께 보낼 데이터가 포함된 JSON 타입의 객체, ex.) {column1: "value1", column2: "value2"}
+         * @param {function} [cause.success] 요청이 성공한 경우 호출되는 함수, 참고) function (response) {}
+         * @param {{}} cause.success.response 응답 결과가 포함된 JSON 타입의 객체, ex.) {"key11": "value11"}
+         * @returns {jqXHR} jQuery XMLHttpRequest 객체, 참고) https://api.jquery.com/jQuery.ajax/#jqXHR
+         */
+        patch: function (cause) {
+            cause.type = METHOD.PATCH;
+
+            return this.request(cause);
+        },
+
+        /**
+         * @function delete
+         * @description DELETE 방식으로 JSON 데이터 비동기 HTTP 요청
+         * @example
+         * _AJAX.delete({
+         *     url: "/test",
+         *     data: {
+         *         column1: "value1",
+         *         column2: "value2"
+         *     }
+         *     success: function (response) {
+         *         console.log("success");
+         *         console.log("response: " + JSON.stringify(response));
+         *     }
+         * });
+         * @param {{}} cause JSON 타입의 부가 정보
+         * @param {string} cause.url 비동기 HTTP 요청 주소
+         * @param {{}} [cause.data] 요청시 보낼 JSON 타입의 데이터, ex.) {column1: "value1", column2: "value2"}
+         * @param {function} [cause.success] 요청이 성공한 경우 호출되는 함수, 참고) function (response) {}
+         * @param {{}} [cause.success.response] 응답 결과가 포함된 JSON 타입의 객체, ex.) {"key11": "value11"}
+         * @returns {jqXHR} jQuery XMLHttpRequest 객체, 참고) https://api.jquery.com/jQuery.ajax/#jqXHR
+         */
+        delete: function (cause) {
+            cause.type = METHOD.DELETE;
+
+            return this.request(cause);
+        },
+        request: function (cause, loadingDialog) {
+
+            if (!(loadingDialog === false)) loadingDialog = true;
+
+            return $.ajax(getRequestProperties(cause, loadingDialog));
+        },
+
+        /**
+         * @function attach
+         * @description 파일 첨부를 위한 FormData 비동기 HTTP 요청
+         * @example <caption>HTML:</caption>
+         * <form id="form1">
+         *     <input type="file" name="file1" />
+         * </form>
+         * @example <caption>JAVAScript:</caption>
+         * var form1 = $("#form1")[0];
+         * _AJAX.attach($(document.body), {
+         *     url: "/api/system/attachment",
+         *     data: new FormData(form1),
+         *     success: (response) => {
+         *         form1.reset();
+         *         if ("SUCCESS" === response["apiStatus"] && null != response["resultList"]) {
+         *             console.log("파일 첨부가 완료되었습니다.");
+         *             console.log("result: " + response["resultList"][0]);
+         *             return;
+         *         }
+         *         console.log("error: " + response.message);
+         *     },
+         *     error: function (jqXHR) {
+         *         form1.reset();
+         *         errorRequest(jqXHR); // 요청 오류 처리 공통 함수
+         *     }
+         * });
+         * @param {jQuery} $el 파일 첨부 progress bar 를 표시할 HTMLElement 의 jQuery 객체
+         * @param {{}} options JSON 타입의 부가 정보
+         * @param {string} options.url 비동기 HTTP 요청 주소
+         * @param {FormData} options.data 요청시 함께 보낼 데이터가 포함된 FormData 타입의 객체
+         * @param {function} options.success 요청이 성공한 경우 호출되는 함수, 참고) function (response) {}
+         * @param {{}} options.success.response 응답 결과가 포함된 JSON 타입의 객체, ex.) {"key11": "value11"}
+         * @param {function} options.error 요청이 실패한 경우 호출되는 함수, 참고) function (jqXHR) {}
+         * @param {jqXHR} options.error.jqXHR jQuery XMLHttpRequest 객체, 참고) https://api.jquery.com/jQuery.ajax/#jqXHR
+         */
+        attach: function ($el, options) {
+            var success = options["success"];
+            var error = options["error"];
+
+            options["success"] = function (response) {
+                $progressBar(100);
+                $unblock();
+                if (typeof response === "string") {
+                    _ALERT.confirm(_i18n.t("로그아웃-되었습니다--로그인-화면으로-이동하시겠습니까-"), () => {
+                        window.location.reload();
+                    });
+                } else {
+                    if (null != success) success(response);
+                }
+            }
+            options["error"] = function (jqXHR) {
+                $unblock();
+                if (null != error) error(jqXHR);
+            }
+
+            if (null == options["type"]) options["type"] = "post";
+            if (null == options["enctype"]) options["enctype"] = "multipart/form-data";
+            if (null == options["processData"]) options["processData"] = false;
+            if (null == options["contentType"]) options["contentType"] = false;
+            if (null == options["cache"]) options["cache"] = false;
+            if (null == options["timeout"]) options["timeout"] = 600000;
+            if (null == options["xhr"]) {
+                options["xhr"] = function () {
+                    var xhr = $.ajaxSettings.xhr();
+
+                    xhr.upload.onprogress = function (event) {
+                        var percent = Math.ceil(event.loaded * 100 / event.total);
+                        $progressBar(percent);
+                        console.log("첨부 진행율: " + percent + "%");
+                    };
+                    xhr.upload.onloadstart = function () {
+                        $block(
+                            '<div id="uploadProgressModal" class="progress progress-lg" style="width: 300px;">' +
+                                '<div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100">0%</div>' +
+                            '</div>'
+                        );
+                        console.log("첨부 시작");
+                    };
+                    xhr.upload.onabort = function () {
+                        $unblock();
+                        console.log("첨부 중단");
+                        _TOAST.warning(_i18n.t("첨부가-중단되었습니다-"));
+                    };
+                    xhr.upload.onerror = function () {
+                        $unblock();
+                        console.log("첨부 오류");
+                        _TOAST.error(_i18n.t("첨부시-오류가-발생했습니다-"));
+                    };
+                    xhr.upload.onload = function (event) {
+                        $progressBar(100);
+                        console.log("첨부 성공");
+                    };
+                    xhr.upload.ontimeout = function () {
+                        $unblock();
+                        console.log("첨부 TIMEOUT");
+                        _TOAST.error(_i18n.t("첨부시-TIMEOUT-오류가-발생했습니다-"));
+                    };
+                    xhr.upload.onloadend = function (event) {
+                        $unblock();
+                        console.log("첨부 종료");
+                    };
+                    return xhr;
+                };
+            }
+            $.ajax(options);
+
+            // nested ----------
+            function $block (message) {
+                if (null != $el.block) {
+                    if (1 === $el.length) {
+                        $el.block(message);
+                    } else {
+                        $(document.body).blockDefaultFunction({"baseZ": 3000,"message": '<div class="my-1">' + message + '</div>'});
+                    }
+                } else {
+                    console.log("progress modal - open");
+                }
+            }
+            function $unblock () {
+                if (null != $el.block) {
+                    if (1 === $el.length) {
+                        $el.unblock();
+                    } else {
+                        $(document.body).unblock();
+                    }
+                } else {
+                    console.log("progress modal - close");
+                }
+            }
+            function $progressBar (percent) {
+                if (null != $el.block) {
+                    $("#uploadProgressModal").find(".progress-bar").css("width", percent + "%").text(percent + "%");
+                } else {
+                    console.log("progress modal - " + percent + "%");
+                }
+            }
+        },
+
+        /**
+         * @function GUID
+         * @description GUID 를 가져오는 비동기 HTTP 요청
+         * @example
+         * _AJAX.GUID((newGUID) => {
+         *     console.log("GUID: " + newGUID);
+         * });
+         * @param {function} consumer 성공시 호출되는 함수; 참고) function (newGUID) {}
+         */
+        GUID: function (consumer) {
+            this.get({
+                url: "/api/guid",
+                success: (responseGuid) => {
+                    if (!v.isBlank(responseGuid)) {
+                        consumer(responseGuid);
+                        return;
+                    }
+                    _TOAST.error(_i18n.t("GUID-요청-결과가-존재하지-않습니다--관리자에게-문의하십시오-"));
+                },
+                error: () => {_TOAST.error(_i18n.t("GUID-요청시-오류가-발생했습니다--관리자에게-문의하십시오-"));}
+            });
+        }
+    };
+
+})();
+
+
+// 요청 속성 목록 가져오기
+var getRequestProperties = function (cause/*, loadingDialog*/) {
+
+    var result = $.extend("{}", cause);
+
+    var TYPE = cause.type || METHOD.GET;
+
+    result.data = getRequestData(result.data, TYPE);
+    result.contentType = getRequestContentType(result.contentType);
+    result.error = getRequestFail(result.error);
+    result.success = getRequestSuccess(result.success);
+
+    log.line();
+    log.debug("REQUEST PROPS :: " + JSON.stringify(result));
+    log.line();
+
+    return result;
+};
+
+// 요청 Data 가져오기
+var getRequestData = function (cause, type) {
+
+    if (null == cause || undefined === cause) cause = {};
+
+    return (type !== "get" && type !== "GET") ? JSON.stringify(cause) : $.param(cause);
+};
+
+// 요청 Content Type 가져오기
+var getRequestContentType = function (cause) {
+
+    var result;
+
+    if (null != cause && 0 < cause.length)
+        result = cause;
+    else
+        result = APPLICATION_JSON_UTF8_VALUE;
+
+    return result;
+};
+
+var commonSuccess = function (result) {
+
+};
+
+// 요청 성공 가져오기
+var getRequestSuccess = function (cause) {
+
+    var result;
+
+    if (null == cause) {
+
+        result = commonSuccess;
+    } else {
+
+        result = function (result) {
+
+            commonSuccess(result);
+
+            log.debug("SUCCESS RESULT :: " + JSON.stringify(result));
+
+            if (null != cause) {
+                var API_STATUS = result.apiStatus;
+
+                if (typeof result === "string") {
+                    _ALERT.confirm(_i18n.t("로그아웃-되었습니다--로그인-화면으로-이동하시겠습니까-"), () => {
+                        window.location.reload();
+                    });
+                    // cause(result);
+                } else {
+
+                    if (API_STATUS === "SUCCESS") {
+
+                        if (result.resultObject !== null) {
+                            cause(result.resultObject);
+                        } else if (result.resultList !== null) {
+                            var totalPage = result.pageInfo ? result.pageInfo.pages : 1;
+                            var totalCount = result.pageInfo ? result.pageInfo.total : 0;
+                            var rowsPerPage = result.pageInfo ? result.pageInfo.pageSize : 10;
+
+                            cause(result.resultList, totalPage, totalCount, rowsPerPage);
+                        } else {
+                            cause(result.resultCount);
+                        }
+                    } else if (API_STATUS === "BAD_REQUEST") {
+                        log.debug("API_STATUS");
+
+                        setTimeout(function () {
+                            _ALERT.error(result.message);
+                        }, 500);
+                    }
+                }
+            }
+        };
+    }
+
+    return result;
+};
+
+// 요청 Error 가져오기
+var getRequestFail = function (cause) {
+
+    var result;
+
+    if (null == cause) {
+
+        result = errorRequest;
+    } else {
+
+        result = function (result) {
+
+            errorRequest(result);
+
+            if (null != cause) cause(result);
+        };
+    }
+
+    return result;
+};
+
+// 요청 오류 // 공통 발생
+var errorRequest = function (result) {
+    if (405 === result.status && "/login" === result.responseJSON.path) { // Method Not Allowed
+        _ALERT.confirm(_i18n.t("로그아웃-되었습니다--로그인-화면으로-이동하시겠습니까-"), () => {
+            window.location.reload();
+        });
+    } else {
+        const dialog = _ALERT.error(_i18n.t("요청-중-오류가-발생-했습니다-") + "<span id=\"ajaxErrorInfo\"></span>");
+
+        if (null != window["errorInfoDisplayYn"] && "Y" === window["errorInfoDisplayYn"]) {
+            dialog.on("shown.bs.modal", () => {
+                // <div class="bootbox modal ..." />
+                $("#ajaxErrorInfo").parent().parent().parent().parent().parent().dblclick(() => {
+                    const target = $("#modalAjaxErrorInfo"); /* base.html 참조 */
+
+                    target.clearFields();
+                    if (null != result && null != result["responseJSON"]) {
+                        target.fillFields(result["responseJSON"]);
+                    }
+                    target.modal("show");
+                });
+            });
+        }
+    }
+
+    if (null != result["responseJSON"] && null != result.responseJSON["trace"]) console.log(result.responseJSON.trace);
+};

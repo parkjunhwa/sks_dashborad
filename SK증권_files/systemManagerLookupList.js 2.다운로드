@@ -1,0 +1,71 @@
+const SystemManagerLookupListWidget = {
+    $el: $.scope("SYSTEM_MANAGER_LOOKUP_LIST_WIDGET"),
+
+    config: {
+        widgetId: "SYSTEM_MANAGER_LOOKUP_LIST"
+    },
+
+    init: function () {
+        const _this = this;
+
+        if (_this.$el.length > 0) {
+            _this.bind.buttons(_this);
+            _this.bind.rows(_this);
+        }
+
+        if (DashboardGridStack.instance) _this.bind.fields(_this);
+
+        if (_this.$el.length > 0) {
+            WidgetCommon.methods.changeConfig(_this, _this.$el.getFieldParameters());
+        }
+    },
+
+    bind: {
+        fields: (_this) => WidgetCommon.methods.addEventForResize(_this.$el, [3], 742.625),
+
+        buttons: (_this) => {
+            _this.$el.clickButtons("more", function () {
+                location.href = "/approval/lookup/system-manager";
+            });
+        },
+
+        rows: (_this) => {
+            _this.$el.find("tbody tr[data-link] td").click(function () {
+                const _this = $(this);
+
+                _COMMON.move(_this.closest("tr").attr("data-link"));
+            });
+        }
+    }
+};
+SystemManagerLookupListWidget.init();
+
+const SystemManagerLookupListWidgetConfig = {
+    $el: $.scope("SYSTEM_MANAGER_LOOKUP_LIST_WIDGET_CONF"),
+
+    main: SystemManagerLookupListWidget,
+
+    init: function () {
+        const _this = this;
+
+        WidgetCommonConfig.bind.fields(_this);
+        WidgetCommonConfig.bind.buttons(_this);
+
+        /**
+         * WidgetConfig 창이 열릴때, 모든 데이터를 초기화 한다.
+         */
+        _this.$el.on("show.bs.modal", function () {
+            WidgetCommonConfig.reload(_this);
+        });
+
+        _this.$el.on("hidden.bs.modal", function () {
+        });
+    },
+
+    close: function () {
+        const _this = this;
+
+        _this.$el.modal("hide");
+    }
+};
+SystemManagerLookupListWidgetConfig.init();

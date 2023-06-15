@@ -1,0 +1,62 @@
+/**
+ * 공통 Utils
+ *
+ * @author jason, Moon
+ */
+"use strict";
+
+(function() {
+    if (null != window["CSVUtils"] || null == window["jQuery"]) return;
+
+    window.CSVUtils = {
+
+        toObjectArray: function (event, properties, targetObject, callback) {
+            var reader = new FileReader();
+
+            var file = event.target.files[0];
+
+            reader.readAsText(file, "euc-kr");
+
+            reader.onload = function (evt) {
+
+                var csvData = evt.target.result;
+
+                var str = csvData.split("\n");
+
+                str.shift();
+
+                var dataFilter = str.map(function (item) {
+
+                    var arr = item.split(",");
+
+                    if ( arr.length === 3 ) return arr[0] + "," + arr[1] + "," + arr[2]; // [0]: 이름, [1]: 이메일, [2]: 설명
+                }).filter(function (v) {
+                    return v;
+                });
+
+                $.each(dataFilter, function (index, element) {
+
+                    var length = element.split(",").length;
+
+                    if (length == properties.length) {
+
+                        var object = {};
+
+                        targetObject[index] = object;
+
+                        if (element){
+                            $.each(element.split(","), function (i, e) {
+
+                                if (e) {
+                                    object[properties[i]] = e;
+                                }
+                            });
+                        }
+                    }
+                });
+
+                callback();
+            };
+        }
+    };
+}());
