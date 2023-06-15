@@ -80,6 +80,9 @@
     background: #fff;
     padding: 0px;
 }
+.card_03_ {
+    height: 820px;
+}
 .card_04 {
     height: 80px;
     background: url("../images/law.png") right center no-repeat #2D0B04;
@@ -115,8 +118,35 @@
     margin-right: 8px;
     margin-top: -2px;
 }
+/*
+.form_link a {
+    padding: 30px 20px;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+.form_link h2 {
+    margin-bottom: 0;
+    justify-content: start;
+    align-items: center;
+    flex-direction: row;
+}
+.form_link h2:hover {
+    color: #FF0000;
+}
+.form_link h2:active {
+    color: #FF0000;
+}
+.form_link .btn_more {
+    justify-content: start;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 2px;
+}
+*/
 .main_team_header {
-    margin-top:10px;
+    margin-top: 30px;
     padding: 0px 30px;
     flex-wrap: wrap;
     display: flex;
@@ -183,7 +213,7 @@ h5.notice-text {
     color: #333333;
 }
 .notice_item {
-    padding: 30px;
+    padding: 10px 30px;
 }
 .notice_item_box {
     margin-top: 16px;
@@ -202,7 +232,7 @@ h5.notice-text {
     background: url("../images/notice_icon02.svg") 0 2px no-repeat #fff;
 }
 .main_link {
-    padding: 30px;
+    padding: 20px;
 }
 .link_area {
     margin-top: 16px;
@@ -221,7 +251,7 @@ h5.notice-text {
     margin-bottom: 12px;
     word-wrap: none;
     background: #fff;
-    padding: 16px 20px;
+    padding: 12px 20px;
     margin: 0;
     width: calc(50% - 5px);
 }
@@ -255,10 +285,9 @@ h5.notice-text {
     min-width: 92px;
     align-items: center;
     justify-content: center;
-    color:#000;
-    background:#f3f3f3;
+    color: #000;
+    background: #f3f3f3;
 }
-
 .main_team_item .main_team_item_text ul {
     padding: 8px;
     list-style: none;
@@ -312,7 +341,9 @@ h5.notice-text {
 .workroom_list_item {
     border-bottom: 1px solid #e3e3e3;
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
+    align-items: center;
+    flex-direction: row;
     font-size: 13px;
     color: #333;
     font-weight: normal;
@@ -328,20 +359,47 @@ h5.notice-text {
     display: flex;
     flex-wrap: nowrap;
     white-space: nowrap;
-    align-items: center;
+    align-items: top;
     align-self: flex-start;
     color: #ffffff;
-    background: #D60222;
+    background: #333;
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     padding: 2px 10px;
     font-size: 12px;
     line-height: 16px;
+    justify-content: center;
+    width: 100px;
+    flex-basis: auto;
+}
+.col-lg-8 .work_item_state {
+    width: 64px;
+}
+/*접수중*/
+.work_item_state.state01 {
+    background: #E8B350;
+}
+/*검토중*/
+.work_item_state.state02 {
+    background: #1FBF9B;
+}
+/*결재대기*/
+.work_item_state.state03 {
+    background: #9C6AE6;
+}
+/*반려*/
+.work_item_state.state04 {
+    background: #F35D85;
+}
+/*검토완료*/
+.work_item_state.state05 {
+    background: #333333;
 }
 .work_item_title {
     display: flex;
     align-items: top;
+    word-wrap: break-word;
 }
 .auto-overflow {
     overflow: auto;
@@ -367,6 +425,9 @@ h5.notice-text {
     background-size: cover;
     background-position: center center;
 }
+.greeting_block {
+    display: block;
+}
 .greeting h1 {
     font-weight: 700;
     font-size: 34px;
@@ -389,6 +450,23 @@ h5.notice-text {
     font-weight: 400;
     color: #565656;
     text-align: justify;
+}
+.greeting_block .pic_area {
+    width: 300px;
+    max-width: 30%;
+    margin: 0 30px 30px 0;
+    float: left;
+    border-radius: 16px;
+    overflow: hidden;
+}
+.greeting_block .pic_area img {
+    width: 100%;
+}
+.greeting_block .text_area {
+    flex-basis: content;
+}
+.greeting_block .text_area p:first-child {
+    margin-top: 0;
 }
 .business h1 {
     font-weight: 700;
