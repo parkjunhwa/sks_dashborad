@@ -260,6 +260,9 @@ h5.notice-text {
     padding: 10px 20px;
     margin: 0;
     width: calc(50% - 5px);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 .link-item:hover, .link-item:active {
     color: #D60222;
