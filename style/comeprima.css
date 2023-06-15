@@ -75,6 +75,22 @@
     background: #fff;
     padding: 0px;
 }
+.card_01_01 {
+    height: 380px;
+    background: #fff;
+    padding: 0px;
+}
+.card_01_02 {
+    height: 59px;
+    background: #fff;
+    padding: 0px;
+}
+.card_01_03 {
+    height: 341px;
+    background: #fff;
+    padding: 0px;
+}
+
 .card_03 {
     height: 720px;
     background: #fff;
@@ -119,7 +135,7 @@
     margin-top: -2px;
 }
 .form_link {
-    padding: 10px 20px 20px 20px;
+    padding: 0px;
 }
 .form_link a {
     background-color: #2D0B04;
@@ -223,7 +239,7 @@ h5.notice-text {
     background: url("../images/notice_icon02.svg") 0 2px no-repeat #fff;
 }
 .main_link {
-    padding: 20px;
+    padding: 30px 20px 20px 20px;
 }
 .link_area {
     margin-top: 16px;
@@ -242,7 +258,7 @@ h5.notice-text {
     margin-bottom: 12px;
     word-wrap: none;
     background: #fff;
-    padding: 12px 20px;
+    padding: 10px 20px;
     margin: 0;
     width: calc(50% - 5px);
 }
